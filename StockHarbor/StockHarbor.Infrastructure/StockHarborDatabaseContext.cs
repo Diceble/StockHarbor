@@ -21,6 +21,13 @@ public class StockHarborDatabaseContext : DbContext
         .HasForeignKey(v => v.ProductId)
         .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<ProductVariant>()
+           .OwnsOne(pv => pv.Price, money =>
+           {
+               money.Property(m => m.Amount).HasColumnName("PriceAmount");
+               money.Property(m => m.Currency).HasColumnName("PriceCurrency");
+           });
+
         modelBuilder.Entity<ProductVariantSupplier>()
             .HasKey(pvs => new { pvs.ProductVariantId, pvs.SupplierId });
 

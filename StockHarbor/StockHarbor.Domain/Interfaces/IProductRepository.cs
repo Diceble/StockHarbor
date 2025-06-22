@@ -7,7 +7,6 @@ public interface IProductRepository
     Task<IEnumerable<Product>> GetAllAsync(bool includeRelatedEntities);
     Task AddAsync(Product product);
     Task UpdateAsync(Product product);
-    Task<IEnumerable<Product>> GetProductsByProductVariantIdAsync(int supplierId, bool includeRelatedEntities);
     Task AddProductVariantAsync(int productId, ProductVariant variant);
     Task UpdateProductVariantAsync(ProductVariant variant);
     Task RemoveProductVariantAsync(int variantId);
