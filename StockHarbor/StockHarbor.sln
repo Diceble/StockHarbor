@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35913.81 d17.13
+VisualStudioVersion = 17.13.35913.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockHarbor.Domain", "StockHarbor.Domain\StockHarbor.Domain.csproj", "{BF94B8A8-57A0-43EA-A86E-E1F2F547130C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockHarbor.Infrastructure", "StockHarbor.Infrastructure\StockHarbor.Infrastructure.csproj", "{DAB1D9EC-DFB0-4237-ABCF-82EA5FD9205C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockHarbor.API", "StockHarbor.API\StockHarbor.API.csproj", "{2DAEAD75-ADCF-4C97-8AAC-8DC7CCD54D48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{DAB1D9EC-DFB0-4237-ABCF-82EA5FD9205C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAB1D9EC-DFB0-4237-ABCF-82EA5FD9205C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAB1D9EC-DFB0-4237-ABCF-82EA5FD9205C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DAEAD75-ADCF-4C97-8AAC-8DC7CCD54D48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DAEAD75-ADCF-4C97-8AAC-8DC7CCD54D48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DAEAD75-ADCF-4C97-8AAC-8DC7CCD54D48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DAEAD75-ADCF-4C97-8AAC-8DC7CCD54D48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
