@@ -70,15 +70,6 @@ public class ProductRepository : IProductRepository
         {
             await _dbContext.Products.AddAsync(product);
             await _dbContext.SaveChangesAsync();
-
-            foreach (var variant in product.Variants)
-            {
-                variant.ProductId = product.ProductId; // Set FK if not handled via navigation
-            }
-
-            await _dbContext.ProductVariants.AddRangeAsync(product.Variants);
-            await _dbContext.SaveChangesAsync();
-
             await transaction.CommitAsync();
         }
         catch

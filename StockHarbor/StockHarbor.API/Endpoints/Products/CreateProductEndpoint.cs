@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using StockHarbor.API.Mappers.Product;
 using StockHarbor.API.Models.Products.Request;
 using StockHarbor.API.Models.Products.Response;
+using StockHarbor.Domain.Entities;
 using StockHarbor.Domain.Interfaces.Services;
 
 namespace StockHarbor.API.Endpoints.Products;
@@ -22,8 +23,8 @@ public class CreateProductEndpoint : Endpoint<CreateProductRequest, CreateProduc
     {
         try
         {
-            var entity = Map.ToEntity(request);
-            var result = await _productService.CreateProductAsync(entity);
+            var productEntity = Map.ToEntity(request);          
+            var result = await _productService.CreateProductAsync(productEntity);
             await SendMappedAsync(result, 200, ct);
         }
         catch (Exception ex)
