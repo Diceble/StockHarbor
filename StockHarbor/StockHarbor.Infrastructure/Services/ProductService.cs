@@ -19,19 +19,18 @@ public class ProductService : IProductService
         if (request.Variants == null || request.Variants.Count == 0)
             throw new ArgumentException("Product must have at least one variant", nameof(request));
 
-        try
-        {
-            var product = await _productRepository.AddProductWithVariants(request);
-            return product;
-        }
-        catch
-        {           
-            throw;
-        }
+        var product = await _productRepository.AddProductWithVariants(request);
+        return product;
+
     }
 
     public Task<ProductVariant?> CreateProductVariantAsync(ProductVariant request)
     {
         throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<Product>> GetAllProducts(bool includeProductVariants)
+    {
+        return _productRepository.GetAllAsync(includeProductVariants);
     }
 }

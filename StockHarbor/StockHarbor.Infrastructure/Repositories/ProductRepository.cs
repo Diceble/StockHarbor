@@ -4,6 +4,7 @@ using StockHarbor.Domain.Entities;
 using StockHarbor.Domain.Enums;
 using StockHarbor.Domain.Exceptions;
 using StockHarbor.Domain.Interfaces.Repository;
+using StockHarbor.Infrastructure.Extensions;
 
 namespace StockHarbor.Infrastructure.Repositories;
 public class ProductRepository : IProductRepository
@@ -103,15 +104,13 @@ public class ProductRepository : IProductRepository
     /// <summary>
     /// Gets all products
     /// </summary>
-    /// <param name="includeRelatedEntities">when true fetches all foreign key relations for product </param>
+    /// <param name="includeProductVariants">when true fetches the variants of that product </param>
     /// <returns></returns>
-    public async Task<IEnumerable<Product>> GetAllAsync(bool includeRelatedEntities = false)
+    public async Task<IEnumerable<Product>> GetAllAsync(bool includeProductVariants = false)
     {
         IQueryable<Product> query = _dbContext.Products;
-        if (includeRelatedEntities)
-        {
-            query = query.Include(p => p.Variants);
-        }
+        query = query.IncludeVariants(includeProductVariants);
+
         return await query.ToListAsync();
     }
 
@@ -119,17 +118,13 @@ public class ProductRepository : IProductRepository
     /// Gets one product based on it's id
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="includeRelatedEntities">when true fetches all foreign key relations for product </param>
+    /// <param name="includeProductVariants">when true fetches the variants of that product </param>
     /// <returns></returns>
     /// <exception cref="ProductNotFoundException">when product is not found for given id</exception>
-    public async Task<Product?> GetByIdAsync(int id, bool includeRelatedEntities = false)
+    public async Task<Product?> GetByIdAsync(int id, bool includeProductVariants = false)
     {
         IQueryable<Product> query = _dbContext.Products;
-
-        if (includeRelatedEntities)
-        {
-            query = query.Include(p => p.Variants);
-        }
+        query.IncludeVariants(includeProductVariants);
 
         return await query.FirstOrDefaultAsync(p => p.ProductId == id) ?? throw new ProductNotFoundException(id);
     }
@@ -194,5 +189,14 @@ public class ProductRepository : IProductRepository
         // etc.
 
         await _dbContext.SaveChangesAsync();
+    }
+
+    private void IncludeProductVariants(IQueryable<Product> query, bool IncludeProductVariants)
+    {
+        if (IncludeProductVariants)
+        {
+            query = query.Include(p => p.Variants);
+
+        }
     }
 }
