@@ -1,6 +1,6 @@
 ﻿using StockHarbor.Domain.Entities;
 
-namespace StockHarbor.Domain.Interfaces;
+namespace StockHarbor.Domain.Interfaces.Repository;
 public interface IProductRepository
 {
     Task<Product?> GetByIdAsync(int id, bool includeRelatedEntities);
@@ -10,4 +10,5 @@ public interface IProductRepository
     Task AddProductVariantAsync(int productId, ProductVariant variant);
     Task UpdateProductVariantAsync(ProductVariant variant);
     Task RemoveProductVariantAsync(int variantId);
+    Task<Product?> AddProductWithVariants(Product product);
 }

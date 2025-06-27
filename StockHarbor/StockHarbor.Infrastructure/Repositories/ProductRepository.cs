@@ -3,16 +3,16 @@ using StockHarbor.Domain;
 using StockHarbor.Domain.Entities;
 using StockHarbor.Domain.Enums;
 using StockHarbor.Domain.Exceptions;
-using StockHarbor.Domain.Interfaces;
+using StockHarbor.Domain.Interfaces.Repository;
 
 namespace StockHarbor.Infrastructure.Repositories;
 public class ProductRepository : IProductRepository
 {
-    public readonly StockHarborDatabaseContext _context;
+    public readonly StockHarborDatabaseContext _dbContext;
 
     public ProductRepository(StockHarborDatabaseContext context)
     {
-        _context = context;
+        _dbContext = context;
     }
 
     /// <summary>
@@ -22,8 +22,8 @@ public class ProductRepository : IProductRepository
     /// <returns></returns>
     public async Task AddAsync(Product product)
     {
-        await _context.Products.AddAsync(product);
-        await _context.SaveChangesAsync();
+        await _dbContext.Products.AddAsync(product);
+        await _dbContext.SaveChangesAsync();
     }
 
     /// <summary>
@@ -35,7 +35,7 @@ public class ProductRepository : IProductRepository
     /// <exception cref="ProductNotFoundException">when variant has no existing product</exception>
     public async Task AddProductVariantAsync(int productId, ProductVariant variant)
     {
-        var product = await _context.Products
+        var product = await _dbContext.Products
         .FirstOrDefaultAsync(p => p.ProductId == productId);
 
         if (product == null)
@@ -43,8 +43,51 @@ public class ProductRepository : IProductRepository
             throw new ProductNotFoundException(productId);
         }
 
-        await _context.ProductVariants.AddAsync(variant);
-        await _context.SaveChangesAsync();
+        await _dbContext.ProductVariants.AddAsync(variant);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    /// <summary>
+    ///  Adds a product with the variants supplied rolls back if something fails
+    /// </summary>
+    /// <param name="product"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"> when there are no variants supplied</exception>
+    /// <exception cref="ArgumentNullException"> when product is null</exception>
+
+    public async Task<Product?> AddProductWithVariants(Product product)
+    {
+        ArgumentNullException.ThrowIfNull(product);
+
+        if (product.Variants == null || product.Variants.Count == 0)
+        {
+            throw new ArgumentException("product must have atleast one  variant", nameof(product));
+        }
+
+        using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+        try
+        {
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+
+            foreach (var variant in product.Variants)
+            {
+                variant.ProductId = product.ProductId; // Set FK if not handled via navigation
+            }
+
+            await _dbContext.ProductVariants.AddRangeAsync(product.Variants);
+            await _dbContext.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+
+        return product;
     }
 
     /// <summary>
@@ -55,10 +98,10 @@ public class ProductRepository : IProductRepository
     /// <exception cref="ProductNotFoundException">if no product is found throws this exception</exception>
     public async Task DeleteAsync(int productId)
     {
-        var productToDelete = await _context.Products.FindAsync(productId);
+        var productToDelete = await _dbContext.Products.FindAsync(productId);
         if (productToDelete != null)
         {
-            await _context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
         else
         {
@@ -73,7 +116,7 @@ public class ProductRepository : IProductRepository
     /// <returns></returns>
     public async Task<IEnumerable<Product>> GetAllAsync(bool includeRelatedEntities = false)
     {
-        IQueryable<Product> query = _context.Products;
+        IQueryable<Product> query = _dbContext.Products;
         if (includeRelatedEntities)
         {
             query = query.Include(p => p.Variants);
@@ -90,7 +133,7 @@ public class ProductRepository : IProductRepository
     /// <exception cref="ProductNotFoundException">when product is not found for given id</exception>
     public async Task<Product?> GetByIdAsync(int id, bool includeRelatedEntities = false)
     {
-        IQueryable<Product> query = _context.Products;
+        IQueryable<Product> query = _dbContext.Products;
 
         if (includeRelatedEntities)
         {
@@ -106,17 +149,17 @@ public class ProductRepository : IProductRepository
     /// <param name="variantId">id of the variant you are trying to delete</param>
     /// <returns></returns>
     /// <exception cref="ProductVariantNotFoundException">when product variant is not found</exception>
-    public async Task RemoveProductVariantAsync(int variantId)   
+    public async Task RemoveProductVariantAsync(int variantId)
     {
-        var variant = await _context.ProductVariants
+        var variant = await _dbContext.ProductVariants
             .FirstOrDefaultAsync(v => v.ProductVariantId == variantId);
 
         if (variant == null) throw new ProductVariantNotFoundException(variantId);
 
         variant.Status = ProductVariantStatus.Deleted;
-        await _context.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
     }
-    
+
 
     /// <summary>
     /// updating the product entity
@@ -127,7 +170,7 @@ public class ProductRepository : IProductRepository
     public async Task UpdateAsync(Product updatedProduct)
     {
         // 1. Load existing product with related ProductSuppliers
-        var existingProduct = await _context.Products
+        var existingProduct = await _dbContext.Products
             .Include(p => p.Variants)
             .FirstOrDefaultAsync(p => p.ProductId == updatedProduct.ProductId);
 
@@ -136,9 +179,9 @@ public class ProductRepository : IProductRepository
 
         // 2. Update scalar properties
         existingProduct.ProductName = updatedProduct.ProductName;
-               
+
         // 4. Save changes
-        await _context.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
     }
 
     /// <summary>
@@ -149,7 +192,7 @@ public class ProductRepository : IProductRepository
     /// <exception cref="ProductVariantNotFoundException">when product variant trying to update is not found </exception>
     public async Task UpdateProductVariantAsync(ProductVariant variant)
     {
-        var existingVariant = await _context.ProductVariants
+        var existingVariant = await _dbContext.ProductVariants
         .FirstOrDefaultAsync(v => v.ProductVariantId == variant.ProductVariantId);
 
         if (existingVariant == null) throw new ProductVariantNotFoundException(variant.ProductVariantId);
@@ -159,6 +202,6 @@ public class ProductRepository : IProductRepository
         existingVariant.Price = variant.Price;
         // etc.
 
-        await _context.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
     }
 }

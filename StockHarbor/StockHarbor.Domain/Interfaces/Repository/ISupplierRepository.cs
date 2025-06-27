@@ -1,6 +1,6 @@
 ﻿using StockHarbor.Domain.Entities;
 
-namespace StockHarbor.Domain.Interfaces;
+namespace StockHarbor.Domain.Interfaces.Repository;
 public interface ISupplierRepository
 {
     Task<Supplier?> GetByIdAsync(int id);

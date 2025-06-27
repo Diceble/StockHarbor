@@ -1,5 +1,5 @@
 ﻿using StockHarbor.Domain.Entities;
-using StockHarbor.Domain.Interfaces;
+using StockHarbor.Domain.Interfaces.Repository;
 
 namespace StockHarbor.Infrastructure.Repositories;
 public class SupplierRepository : ISupplierRepository

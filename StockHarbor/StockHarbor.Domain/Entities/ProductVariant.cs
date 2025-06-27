@@ -12,7 +12,29 @@ public class ProductVariant
     public ProductVariantStatus Status { get; set; } // Optional: Active/Inactive, etc.
 
     public int ProductId { get; set; }
-    public required Product Product { get; set; }
+    public Product? Product { get; set; }
 
     public ICollection<ProductVariantSupplier> ProductVariantSuppliers { get; set; } = new List<ProductVariantSupplier>();
+
+    public ProductVariant(int productVariantId, string name, string description, Money price, string sKU, ProductVariantStatus status, int productId)
+    {
+        ProductVariantId = productVariantId;
+        Name = name;
+        Description = description;
+        Price = price;
+        SKU = sKU;
+        Status = status;
+        ProductId = productId;
+    }
+
+    public ProductVariant(string name, string description, Money price, string sKU, ProductVariantStatus status)
+    {
+        Name = name;
+        Description = description;
+        Price = price;
+        SKU = sKU;
+        Status = status;
+    }
+
+    public ProductVariant() { }
 }

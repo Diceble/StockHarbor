@@ -1,5 +1,9 @@
 
 using FastEndpoints;
+using FastEndpoints.Swagger;
+using Microsoft.EntityFrameworkCore;
+using StockHarbor.API.Extensions;
+using StockHarbor.Domain;
 
 namespace StockHarbor.API;
 
@@ -8,7 +12,14 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddFastEndpoints();
+
+        builder.Services.AddRepositories();
+        builder.Services.AddApplicationServices();
+        builder.Services.AddDbContext<StockHarborDatabaseContext>(options =>
+            options.UseNpgsql("Host=localhost;Port=5432;Database=StockHarbor;Username=StockHarbor;Password=StockHarborPassword"));
+
+        builder.Services.AddFastEndpoints()
+            .SwaggerDocument();
         // Add services to the container.
         //builder.Services.AddAuthorization();
 
@@ -18,13 +29,10 @@ public class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-        }
 
         app.UseHttpsRedirection();
-        app.UseFastEndpoints();
+        app.UseFastEndpoints()
+            .UseSwaggerGen();
         // app.UseAuthorization();       
         app.Run();
     }

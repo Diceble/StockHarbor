@@ -15,31 +15,45 @@ public class StockHarborDatabaseContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Product>()
-        .HasMany(p => p.Variants)
-        .WithOne(v => v.Product)
-        .HasForeignKey(v => v.ProductId)
-        .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.HasKey(p => p.ProductId);
 
-        modelBuilder.Entity<ProductVariant>()
-           .OwnsOne(pv => pv.Price, money =>
-           {
-               money.Property(m => m.Amount).HasColumnName("PriceAmount");
-               money.Property(m => m.Currency).HasColumnName("PriceCurrency");
-           });
+            entity.Property(p => p.ProductId)
+                .UseIdentityAlwaysColumn();
 
-        modelBuilder.Entity<ProductVariantSupplier>()
-            .HasKey(pvs => new { pvs.ProductVariantId, pvs.SupplierId });
+            entity.HasMany(p => p.Variants)
+                .WithOne(v => v.Product)
+                .HasForeignKey(v => v.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
 
-        modelBuilder.Entity<ProductVariantSupplier>()
-            .HasOne(pvs => pvs.ProductVariant)
-            .WithMany(pv => pv.ProductVariantSuppliers)
-            .HasForeignKey(pvs => pvs.ProductVariantId);
+        modelBuilder.Entity<ProductVariant>(entity =>
+        {
+            entity.HasKey(pv => pv.ProductVariantId);
 
-        modelBuilder.Entity<ProductVariantSupplier>()
-            .HasOne(pvs => pvs.Supplier)
-            .WithMany(s => s.ProductVariantSuppliers)
-            .HasForeignKey(pvs => pvs.SupplierId);
+            entity.Property(pv => pv.ProductVariantId)
+                .UseIdentityAlwaysColumn();
+
+            entity.OwnsOne(pv => pv.Price, money =>
+            {
+                money.Property(m => m.Amount).HasColumnName("PriceAmount");
+                money.Property(m => m.Currency).HasColumnName("PriceCurrency");
+            });
+        });
+
+        modelBuilder.Entity<ProductVariantSupplier>(entity =>
+        {
+            entity.HasKey(pvs => new { pvs.ProductVariantId, pvs.SupplierId });
+
+            entity.HasOne(pvs => pvs.ProductVariant)
+                .WithMany(pv => pv.ProductVariantSuppliers)
+                .HasForeignKey(pvs => pvs.ProductVariantId);
+
+            entity.HasOne(pvs => pvs.Supplier)
+                .WithMany(s => s.ProductVariantSuppliers)
+                .HasForeignKey(pvs => pvs.SupplierId);
+        });
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
