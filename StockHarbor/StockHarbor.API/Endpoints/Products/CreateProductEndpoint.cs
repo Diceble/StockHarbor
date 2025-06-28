@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using StockHarbor.API.Mappers.Product;
 using StockHarbor.API.Models.Products.Request;
 using StockHarbor.API.Models.Products.Response;
-using StockHarbor.Domain.Entities;
 using StockHarbor.Domain.Interfaces.Services;
 
 namespace StockHarbor.API.Endpoints.Products;
@@ -29,7 +28,7 @@ public class CreateProductEndpoint : Endpoint<CreateProductRequest, CreateProduc
         }
         catch (Exception ex)
         {
-            await SendErrorsAsync(default, ct);
+            await SendErrorsAsync(StatusCodes.Status400BadRequest, ct);
         }
     }
 }

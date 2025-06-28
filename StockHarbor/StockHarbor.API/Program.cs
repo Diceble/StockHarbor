@@ -4,6 +4,7 @@ using FastEndpoints.Swagger;
 using Microsoft.EntityFrameworkCore;
 using StockHarbor.API.Extensions;
 using StockHarbor.Domain;
+using StockHarbor.Infrastructure;
 
 namespace StockHarbor.API;
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StockHarbor.Domain;
 using StockHarbor.Domain.Entities;
 using StockHarbor.Domain.Enums;
 using StockHarbor.Domain.Exceptions;
