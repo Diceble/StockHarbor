@@ -9,19 +9,12 @@ namespace StockHarbor.API.Endpoints.Products;
 
 [HttpPut("/api/product")]
 [AllowAnonymous]
-public class UpdateProductEndpoint(IProductService productService) : Endpoint<UpdateProductRequest,UpdateProductResponse,UpdateProductMapper>
+public class UpdateProductEndpoint(IProductService productService) : Endpoint<UpdateProductRequest, UpdateProductResponse, UpdateProductMapper>
 {
     public override async Task HandleAsync(UpdateProductRequest request, CancellationToken ct)
     {
-        try
-        {
-            var product = Map.ToEntity(request);
-            var result = await productService.UpdateProductAsync(product);
-            await SendMappedAsync(result, 200, ct);
-        }
-        catch (Exception ex)
-        {
-            await SendErrorsAsync(500,ct);
-        }
+        var product = Map.ToEntity(request);
+        var result = await productService.UpdateProductAsync(product);
+        await SendMappedAsync(result, 200, ct);
     }
 }

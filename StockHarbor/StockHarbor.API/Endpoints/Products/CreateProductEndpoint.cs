@@ -13,15 +13,8 @@ public class CreateProductEndpoint(IProductService productService) : Endpoint<Cr
 {
     public override async Task HandleAsync(CreateProductRequest request, CancellationToken ct)
     {
-        try
-        {
-            var productEntity = Map.ToEntity(request);          
-            var result = await productService.CreateProductAsync(productEntity);
-            await SendMappedAsync(result, 200, ct);
-        }
-        catch (Exception ex)
-        {
-            await SendErrorsAsync(StatusCodes.Status400BadRequest, ct);
-        }
+        var productEntity = Map.ToEntity(request);
+        var result = await productService.CreateProductAsync(productEntity);
+        await SendMappedAsync(result, 200, ct);
     }
 }

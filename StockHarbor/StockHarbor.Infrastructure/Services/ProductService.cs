@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using StockHarbor.Domain.Entities;
+using StockHarbor.Domain.Exceptions;
 using StockHarbor.Domain.Interfaces.Repository;
 using StockHarbor.Domain.Interfaces.Services;
 
@@ -26,7 +27,17 @@ public class ProductService(IProductRepository productRepository, ILogger<Produc
 
     public async Task<Product> UpdateProductAsync(Product product)
     {
-        var updatedProduct = await productRepository.UpdateAsync(product);
-        return updatedProduct;
+        logger.LogInformation("Updating product {ProductId}", product.Id);
+
+        var result = await productRepository.UpdateAsync(product);
+
+        if (result == null)
+        {
+            logger.LogWarning("Attempted to update non-existent product {ProductId}", product.Id);
+            throw new NotFoundException(nameof(Product), product.Id);
+        }
+
+        logger.LogInformation("Product {ProductId} updated successfully", result.Id);
+        return result;
     }
 }

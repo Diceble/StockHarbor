@@ -12,15 +12,8 @@ public class GetAllProductsEndpoint(IProductService productService) : EndpointWi
 {
     public override async Task HandleAsync(CancellationToken ct)
     {
-        try
-        {
-            var products = await productService.GetAllProductsAsync();
-            var mappedProducts = products.Select(Map.FromEntity).ToList();
-            await SendAsync(mappedProducts, 200, ct);
-        }
-        catch (Exception ex)
-        {
-            await SendErrorsAsync(StatusCodes.Status500InternalServerError, ct);
-        }
+        var products = await productService.GetAllProductsAsync();
+        var mappedProducts = products.Select(Map.FromEntity).ToList();
+        await SendAsync(mappedProducts, 200, ct);
     }
 }

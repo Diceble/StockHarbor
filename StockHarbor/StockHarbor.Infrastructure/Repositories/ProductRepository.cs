@@ -21,25 +21,6 @@ public class ProductRepository(StockHarborDatabaseContext context) : IProductRep
     }
 
     /// <summary>
-    /// Deletes product if found
-    /// </summary>
-    /// <param name="productId"></param>
-    /// <returns></returns>
-    /// <exception cref="ProductNotFoundException">if no product is found throws this exception</exception>
-    public async Task DeleteAsync(int productId)
-    {
-        var productToDelete = await _dbContext.Products.FindAsync(productId);
-        if (productToDelete != null)
-        {
-            await _dbContext.SaveChangesAsync();
-        }
-        else
-        {
-            throw new ProductNotFoundException(productId);
-        }
-    }
-
-    /// <summary>
     /// Gets all products
     /// </summary>
     /// <param name="includeProductVariants">when true fetches the variants of that product </param>
@@ -57,12 +38,12 @@ public class ProductRepository(StockHarborDatabaseContext context) : IProductRep
     /// <param name="id"></param>
     /// <param name="includeProductVariants">when true fetches the variants of that product </param>
     /// <returns></returns>
-    /// <exception cref="ProductNotFoundException">when product is not found for given id</exception>
-    public async Task<Product> GetByIdAsync(int id)
+    /// <exception cref="NotFoundException">when product is not found for given id</exception>
+    public async Task<Product?> GetByIdAsync(int id)
     {
         IQueryable<Product> query = _dbContext.Products;
 
-        return await query.FirstOrDefaultAsync(p => p.Id == id) ?? throw new ProductNotFoundException(id);
+        return await query.FirstOrDefaultAsync(p => p.Id == id);
     }
 
     /// <summary>
@@ -70,15 +51,15 @@ public class ProductRepository(StockHarborDatabaseContext context) : IProductRep
     /// </summary>
     /// <param name="updatedProduct"></param>
     /// <returns></returns>
-    /// <exception cref="ProductNotFoundException"> when product trying to update is not found</exception>
-    public async Task<Product> UpdateAsync(Product updatedProduct)
+    /// <exception cref="NotFoundException"> when product trying to update is not found</exception>
+    public async Task<Product?> UpdateAsync(Product updatedProduct)
     {
         // 1. Load existing product with related ProductSuppliers
         var existingProduct = await _dbContext.Products
             .FirstOrDefaultAsync(p => p.Id == updatedProduct.Id);
 
         if (existingProduct == null)
-            throw new ProductNotFoundException(updatedProduct.Id);
+            return null;
 
         // 2. Update scalar properties
         existingProduct.Name = updatedProduct.Name;

@@ -4,7 +4,6 @@ using FastEndpoints.Swagger;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using StockHarbor.API.Extensions;
-using StockHarbor.Domain;
 using StockHarbor.Infrastructure;
 
 namespace StockHarbor.API;
@@ -31,6 +30,8 @@ public class Program
 
         var app = builder.Build();
 
+        app.UseMiddleware<GlobalExceptionMiddleware>();
+        app.UseSerilogRequestLogging();
         // Configure the HTTP request pipeline.
 
         app.UseHttpsRedirection();
