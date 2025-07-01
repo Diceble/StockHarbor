@@ -8,9 +8,6 @@ public class ProductMapper : Mapper<ProductRequest,ProductResponse,Domain.Entiti
 {
     public override ProductResponse FromEntity(Domain.Entities.Product e)
     {
-        var productVariants = e.Variants
-            .Select(v => new ProductVariantResponse(v.ProductVariantId, v.Name, v.Description, v.Price, v.SKU, v.Status, v.ProductId))
-            .ToList();
-        return new ProductResponse(e.ProductId, e.ProductName,productVariants);
+        return new ProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status);
     }
 }

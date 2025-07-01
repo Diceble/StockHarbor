@@ -9,21 +9,14 @@ namespace StockHarbor.API.Endpoints.Products;
 
 [HttpPost("/api/product/create")]
 [AllowAnonymous]
-public class CreateProductEndpoint : Endpoint<CreateProductRequest, CreateProductResponse, CreateProductMapper>
+public class CreateProductEndpoint(IProductService productService) : Endpoint<CreateProductRequest, CreateProductResponse, CreateProductMapper>
 {
-    private readonly IProductService _productService;
-
-    public CreateProductEndpoint(IProductService productService)
-    {
-        _productService = productService;
-    }
-
     public override async Task HandleAsync(CreateProductRequest request, CancellationToken ct)
     {
         try
         {
             var productEntity = Map.ToEntity(request);          
-            var result = await _productService.CreateProductAsync(productEntity);
+            var result = await productService.CreateProductAsync(productEntity);
             await SendMappedAsync(result, 200, ct);
         }
         catch (Exception ex)

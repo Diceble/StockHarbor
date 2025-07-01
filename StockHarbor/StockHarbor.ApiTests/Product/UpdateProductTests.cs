@@ -14,41 +14,26 @@ public class UpdateProductTests(StockHarborApiFixture App) : TestBase<StockHarbo
             "api/product/create", createRequest);
 
         createResponse.IsSuccessStatusCode.ShouldBeTrue();
-        createResult.ProductName.ShouldBe("Test");
-        createResult.ProductVariants.Count().ShouldBe(1);
+        createResult.Name.ShouldBe("Test");
 
         var request = UpdateProduct(createResult);
         var (rsp, result) = await App.Client.PUTAsync<UpdateProductRequest, UpdateProductResponse>(
             "api/product/", request);
 
         rsp.IsSuccessStatusCode.ShouldBeTrue();
-        result.ProductName.ShouldBe("Updated Product Test");
-        result.ProductVariants.Count().ShouldBe(1);
-        result.ProductVariants.Any(v => v.Name == "UpdatedProductVariant").ShouldBeTrue();
+        result.Name.ShouldBe("Updated Product Test");
     }
 
-    private CreateProductRequest CreateProduct()
+    private static CreateProductRequest CreateProduct()
     {
-        var productVariants = new List<CreateProductVariantRequest>()
-        {
-            new("Test-Variant", "Best test Variant", 2.5m, "EUR", "12345", Domain.Enums.ProductVariantStatus.Active),
-        };
-
-        var request = new CreateProductRequest("Test", productVariants);
+        var request = new CreateProductRequest("Test","description", "12345", Domain.Enums.ProductStatus.Active);
 
         return request;
     }
 
-    private UpdateProductRequest UpdateProduct(CreateProductResponse response)
+    private static UpdateProductRequest UpdateProduct(CreateProductResponse response)
     {
-        var updatedProductVariants = new List<UpdateProductVariantRequest>() { };
-
-        foreach (var variant in response.ProductVariants)
-        {
-            updatedProductVariants.Add(new(variant.ProductVariantId, "UpdatedProductVariant", variant.Description, variant.Price.Amount, variant.Price.Currency, variant.Sku, variant.Status, variant.ProductId));
-        }
-
-        var updatedProduct = new UpdateProductRequest(response.ProductId,"Updated Product Test", updatedProductVariants);
+        var updatedProduct = new UpdateProductRequest(response.ProductId,"Updated Product Test", "description", "12345", Domain.Enums.ProductStatus.Active);
 
         return updatedProduct;
     }

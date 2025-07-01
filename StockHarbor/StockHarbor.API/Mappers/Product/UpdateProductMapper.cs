@@ -9,41 +9,24 @@ public class UpdateProductMapper : Mapper<UpdateProductRequest, UpdateProductRes
 {
     public override Domain.Entities.Product ToEntity(UpdateProductRequest r)
     {
-        var mappedVariants = (r.ProductVariants)
-             .Select(v => new ProductVariant()
-             {
-                 ProductVariantId = v.ProductVariantId,
-                 Name = v.Name ?? string.Empty,
-                 Description = v.Description ?? string.Empty,
-                 Price = new Money(v.Price, v.Currency ?? ""),
-                 SKU = v.SKU ?? string.Empty,
-                 Status = v.Status,
-                 ProductId = r.ProductId
-             })
-             .ToList();
-
+        
         return new()
         {
-            ProductId = r.ProductId,
-            ProductName = r.ProductName ?? string.Empty,
-            Variants = mappedVariants
+            Id = r.Id,
+            Name = r.Name,
+            Description = r.Description,
+            Sku = r.Sku,
+            Status = r.Status
         };
     }
 
     public override UpdateProductResponse FromEntity(Domain.Entities.Product e)
     {
-        var mappedVariants = (e.Variants)
-            .Select(v => new UpdateProductVariantResponse(v.ProductVariantId, v.Name, v.Description, v.Price, v.SKU, v.Status, v.ProductId))
-            .ToList();
-        return new UpdateProductResponse(e.ProductId, e.ProductName, mappedVariants);
+        return new UpdateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status);
     }
 
     public override Task<UpdateProductResponse> FromEntityAsync(Domain.Entities.Product e, CancellationToken ct)
     {
-        var mappedVariants = (e.Variants)
-            .Select(v => new UpdateProductVariantResponse(v.ProductVariantId, v.Name, v.Description, v.Price, v.SKU, v.Status, v.ProductId))
-            .ToList();
-
-        return Task.FromResult(new UpdateProductResponse(e.ProductId, e.ProductName, mappedVariants));
+        return Task.FromResult(new UpdateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status));
     }
 }

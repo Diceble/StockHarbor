@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using StockHarbor.API;
-using StockHarbor.Domain.Entities;
 using StockHarbor.Infrastructure;
 using Testcontainers.PostgreSql;
 
@@ -94,28 +93,16 @@ public class StockHarborApiFixture : AppFixture<Program>
     private async Task SeedProductsAsync(StockHarborDatabaseContext db)
     {
         int amountOfProductToAdd = 5;
-        int amountOfVariantsPerProduct = 2;
         // Add common test data that multiple tests might need
         var products = new List<Domain.Entities.Product>();
         for (int i = 0; i < amountOfProductToAdd; i++)
         {
-            var productVariants = new List<ProductVariant>();
-            for (int x = 0; x < amountOfVariantsPerProduct; x++)
-            {
-                productVariants.Add(new ProductVariant()
-                {
-                    Name = $"Test variant {x}",
-                    Description = $"best test variant ever {x}",
-                    Price = new Money(2m, "EUR"),
-                    SKU = "123456",
-                    Status = Domain.Enums.ProductVariantStatus.Active
-                });
-            }
-
             products.Add(new Domain.Entities.Product()
             {
-                ProductName = $"Test product {i}",
-                Variants = productVariants
+                Name = $"Test product {i}",
+                Description = "Best test product",
+                Sku = "12345",
+                Status = Domain.Enums.ProductStatus.Active
             });
         }
 
@@ -131,7 +118,6 @@ public class StockHarborApiFixture : AppFixture<Program>
         try
         {
             // Clear tables in correct order (respecting foreign key constraints)
-            db.ProductVariants.RemoveRange(db.ProductVariants);
             db.Products.RemoveRange(db.Products);
             await db.SaveChangesAsync();
         }

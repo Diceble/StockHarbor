@@ -1,3 +1,5 @@
-﻿namespace StockHarbor.API.Models.Products.Response;
+﻿using StockHarbor.Domain.Enums;
 
-public record UpdateProductResponse(int ProductId, string ProductName, IEnumerable<UpdateProductVariantResponse> ProductVariants);
+namespace StockHarbor.API.Models.Products.Response;
+
+public record UpdateProductResponse(int Id, string Name, string Description, string Sku, ProductStatus Status);

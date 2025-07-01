@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Endpoints\ProductVariants\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\StockHarbor.Domain\StockHarbor.Domain.csproj" />
     <ProjectReference Include="..\StockHarbor.Infrastructure\StockHarbor.Infrastructure.csproj" />
   </ItemGroup>

@@ -1,4 +1,6 @@
-﻿namespace StockHarbor.API.Models.Products.Response;
+﻿using StockHarbor.Domain.Enums;
 
-public record ProductResponse(int ProductId, string ProductName, IEnumerable<ProductVariantResponse> ProductVariants);
+namespace StockHarbor.API.Models.Products.Response;
+
+public record ProductResponse(int ProductId, string Name, string Description, string Sku, ProductStatus Status);
 

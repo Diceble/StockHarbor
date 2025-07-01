@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StockHarbor.Domain.Enums;
 
 namespace StockHarbor.Domain.Entities;
 public class Product
 {
-    public int ProductId { get; set; }
-    public string ProductName { get; set; } = string.Empty;
-
-    public ICollection<ProductVariant>? Variants { get; set; } = [];
+    public int Id { get; set; }
+    public required string Name { get; set; }
+    public required string Description { get; set; }
+    public required string Sku { get; set; } 
+    public ProductStatus Status { get; set; } // Optional: Active/Inactive, etc.
 }

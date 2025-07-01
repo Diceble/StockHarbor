@@ -1,3 +1,5 @@
-﻿namespace StockHarbor.API.Models.Products.Request;
+﻿using StockHarbor.Domain.Enums;
 
-public record UpdateProductRequest(int ProductId, string ProductName, IEnumerable<UpdateProductVariantRequest> ProductVariants);
+namespace StockHarbor.API.Models.Products.Request;
+
+public record UpdateProductRequest(int Id, string Name, string Description, string Sku, ProductStatus Status);
