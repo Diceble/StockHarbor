@@ -10,4 +10,9 @@ public class ProductMapper : Mapper<ProductRequest,ProductResponse,Domain.Entiti
     {
         return new ProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status);
     }
+
+    public override Task<ProductResponse> FromEntityAsync(Domain.Entities.Product e, CancellationToken ct)
+    {
+        return Task.FromResult(new ProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status));
+    }
 }

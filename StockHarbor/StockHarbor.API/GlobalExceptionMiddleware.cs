@@ -29,6 +29,8 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
         {
             NotFoundException => (StatusCodes.Status404NotFound, "Resource not found"),
             ValidationException => (StatusCodes.Status400BadRequest, exception.Message),
+            ArgumentOutOfRangeException => (StatusCodes.Status400BadRequest, exception.Message),
+            ArgumentNullException => (StatusCodes.Status400BadRequest,exception.Message),
             UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Unauthorized"),
             _ => (StatusCodes.Status500InternalServerError, "An error occurred")
         };

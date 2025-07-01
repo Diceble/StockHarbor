@@ -8,7 +8,6 @@ using StockHarbor.Domain.Interfaces.Services;
 namespace StockHarbor.API.Endpoints.Products;
 
 [HttpPut("/api/product")]
-[AllowAnonymous]
 public class UpdateProductEndpoint(IProductService productService) : Endpoint<UpdateProductRequest, UpdateProductResponse, UpdateProductMapper>
 {
     public override async Task HandleAsync(UpdateProductRequest request, CancellationToken ct)

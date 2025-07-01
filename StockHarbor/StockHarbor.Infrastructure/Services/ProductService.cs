@@ -25,6 +25,20 @@ public class ProductService(IProductRepository productRepository, ILogger<Produc
         return await productRepository.GetAllAsync();
     }
 
+    public async Task<Product> GetProductById(int id)
+    {
+        if(id < 0)
+        {
+            logger.LogWarning("Attempting to get product with invalid Id {id}", id);
+            throw new ArgumentOutOfRangeException(nameof(id), id, "Attempting to get product with invalid Id");
+        }
+
+        logger.LogInformation("Fetching product with id: {id}",id);
+
+        var product = await productRepository.GetByIdAsync(id);
+        return product ?? throw new NotFoundException(nameof(product), id);
+    }
+
     public async Task<Product> UpdateProductAsync(Product product)
     {
         logger.LogInformation("Updating product {ProductId}", product.Id);

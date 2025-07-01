@@ -7,8 +7,7 @@ using StockHarbor.Domain.Interfaces.Services;
 
 namespace StockHarbor.API.Endpoints.Products;
 
-[HttpPost("/api/product/create")]
-[AllowAnonymous]
+[HttpPost("/api/product")]
 public class CreateProductEndpoint(IProductService productService) : Endpoint<CreateProductRequest, CreateProductResponse, CreateProductMapper>
 {
     public override async Task HandleAsync(CreateProductRequest request, CancellationToken ct)

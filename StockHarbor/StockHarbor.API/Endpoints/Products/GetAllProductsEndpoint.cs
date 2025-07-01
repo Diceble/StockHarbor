@@ -7,7 +7,6 @@ using StockHarbor.Domain.Interfaces.Services;
 namespace StockHarbor.API.Endpoints.Products;
 
 [HttpGet("/api/product")]
-[AllowAnonymous]
 public class GetAllProductsEndpoint(IProductService productService) : EndpointWithoutRequest<IEnumerable<ProductResponse>, ProductMapper>
 {
     public override async Task HandleAsync(CancellationToken ct)
