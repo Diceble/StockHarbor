@@ -29,8 +29,36 @@ public class ProductService : IProductService
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Product>> GetAllProducts(bool includeProductVariants)
+    public async Task<IEnumerable<Product>> GetAllProductsAsync(bool includeProductVariants)
     {
-        return _productRepository.GetAllAsync(includeProductVariants);
+        return await _productRepository.GetAllAsync(includeProductVariants);
+    }
+
+    public async Task<Product?> UpdateProductAsync(Product product)
+    {
+        var updatedProduct = await _productRepository.UpdateAsync(product);
+
+        if (updatedProduct != null)
+        {
+            ICollection<ProductVariant>? variants = null;
+            if (product.Variants != null && product.Variants.Count != 0)
+            {
+                variants = [.. product.Variants];
+                updatedProduct.Variants = await UpdateProductVariantRange(variants);
+            }
+        }
+        return updatedProduct;
+    }
+
+    public async Task<ICollection<ProductVariant>> UpdateProductVariantRange(ICollection<ProductVariant> variants)
+    {
+        ICollection<ProductVariant> updatedVariants = [];
+        foreach (var variant in variants)
+        {
+            var updatedVariant = await _productRepository.UpdateProductVariantAsync(variant);
+            if (updatedVariant != null)
+                updatedVariants.Add(updatedVariant);
+        }
+        return updatedVariants;
     }
 }

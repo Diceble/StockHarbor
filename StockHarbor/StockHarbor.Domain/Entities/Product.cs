@@ -10,5 +10,5 @@ public class Product
     public int ProductId { get; set; }
     public string ProductName { get; set; } = string.Empty;
 
-    public ICollection<ProductVariant> Variants { get; set; } = [];
+    public ICollection<ProductVariant>? Variants { get; set; } = [];
 }

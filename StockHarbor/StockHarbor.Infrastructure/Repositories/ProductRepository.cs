@@ -152,11 +152,10 @@ public class ProductRepository : IProductRepository
     /// <param name="updatedProduct"></param>
     /// <returns></returns>
     /// <exception cref="ProductNotFoundException"> when product trying to update is not found</exception>
-    public async Task UpdateAsync(Product updatedProduct)
+    public async Task<Product?> UpdateAsync(Product updatedProduct)
     {
         // 1. Load existing product with related ProductSuppliers
         var existingProduct = await _dbContext.Products
-            .Include(p => p.Variants)
             .FirstOrDefaultAsync(p => p.ProductId == updatedProduct.ProductId);
 
         if (existingProduct == null)
@@ -167,6 +166,9 @@ public class ProductRepository : IProductRepository
 
         // 4. Save changes
         await _dbContext.SaveChangesAsync();
+
+        // 5. return updated product
+        return existingProduct;
     }
 
     /// <summary>
@@ -175,7 +177,7 @@ public class ProductRepository : IProductRepository
     /// <param name="variant"></param>
     /// <returns></returns>
     /// <exception cref="ProductVariantNotFoundException">when product variant trying to update is not found </exception>
-    public async Task UpdateProductVariantAsync(ProductVariant variant)
+    public async Task<ProductVariant?> UpdateProductVariantAsync(ProductVariant variant)
     {
         var existingVariant = await _dbContext.ProductVariants
         .FirstOrDefaultAsync(v => v.ProductVariantId == variant.ProductVariantId);
@@ -188,14 +190,7 @@ public class ProductRepository : IProductRepository
         // etc.
 
         await _dbContext.SaveChangesAsync();
-    }
 
-    private void IncludeProductVariants(IQueryable<Product> query, bool IncludeProductVariants)
-    {
-        if (IncludeProductVariants)
-        {
-            query = query.Include(p => p.Variants);
-
-        }
+        return existingVariant;
     }
 }

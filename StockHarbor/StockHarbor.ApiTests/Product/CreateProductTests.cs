@@ -2,9 +2,9 @@
 using StockHarbor.API.Models.Products.Response;
 using StockHarbor.Domain.Entities;
 
-namespace StockHarbor.ApiTests;
+namespace StockHarbor.ApiTests.Product;
 
-public class ProductTests(StockHarborApiFixture App) : TestBase<StockHarborApiFixture>
+public class CreateProductTests(StockHarborApiFixture App) : TestBase<StockHarborApiFixture>
 {
     [Fact]
     public async Task CreateProduct_ReturnSuccess()

@@ -7,9 +7,9 @@ using StockHarbor.Domain.Interfaces.Services;
 
 namespace StockHarbor.API.Endpoints.Products;
 
-[HttpPost("/api/product")]
+[HttpGet("/api/product")]
 [AllowAnonymous]
-public class GetAllProductsEndpoint : Endpoint<GetAllProductRequest,IEnumerable<ProductResponse>, ProductMapper>
+public class GetAllProductsEndpoint : Endpoint<GetAllProductRequest, IEnumerable<ProductResponse>, ProductMapper>
 {
     private readonly IProductService _productService;
 
@@ -22,13 +22,13 @@ public class GetAllProductsEndpoint : Endpoint<GetAllProductRequest,IEnumerable<
     {
         try
         {
-            var products = await _productService.GetAllProducts(request.IncludeProductVariants);
+            var products = await _productService.GetAllProductsAsync(request.IncludeProductVariants);
             var mappedProducts = products.Select(p => Map.FromEntity(p)).ToList();
             await SendAsync(mappedProducts, 200, ct);
         }
         catch (Exception ex)
         {
-            await SendErrorsAsync(default, ct);
+            await SendErrorsAsync(StatusCodes.Status500InternalServerError, ct);
         }
     }
 }

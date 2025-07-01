@@ -9,30 +9,37 @@ public class CreateProductMapper : Mapper<CreateProductRequest, CreateProductRes
 {
     public override Domain.Entities.Product ToEntity(CreateProductRequest r)
     {
-        var mappedVariants = r.ProductVariants?
-             .Select(v => new ProductVariant() { Name = v.Name, Description = v.Description, Price = new Money(v.Price, v.Currency), SKU = v.SKU, Status = v.Status })
-             .ToList() ?? new();
+        var mappedVariants = (r.ProductVariants)
+             .Select(v => new ProductVariant() 
+             {
+                 Name = v.Name ?? string.Empty,
+                 Description = v.Description ?? string.Empty,
+                 Price = new Money(v.Price, v.Currency ?? ""),
+                 SKU = v.SKU ?? string.Empty,
+                 Status = v.Status
+             })
+             .ToList();
 
         return new()
         {
-            ProductName = r.ProductName,
+            ProductName = r.ProductName ?? string.Empty,
             Variants = mappedVariants
         };
     }
 
     public override CreateProductResponse FromEntity(Domain.Entities.Product e)
     {
-        var mappedVariants = e.Variants
+        var mappedVariants = (e.Variants)
             .Select(v => new CreateProductVariantResponse(v.ProductVariantId, v.Name, v.Description, v.Price,v.SKU,v.Status,v.ProductId))
-            .ToList() ?? new();
+            .ToList();
         return new CreateProductResponse(e.ProductId, e.ProductName, mappedVariants);
     }
 
     public override Task<CreateProductResponse> FromEntityAsync(Domain.Entities.Product e, CancellationToken ct)
     {
-        var mappedVariants = e.Variants
+        var mappedVariants = (e.Variants)
             .Select(v => new CreateProductVariantResponse(v.ProductVariantId, v.Name, v.Description, v.Price, v.SKU, v.Status, v.ProductId))
-            .ToList() ?? new();
+            .ToList();
 
         return Task.FromResult(new CreateProductResponse(e.ProductId, e.ProductName, mappedVariants));
     }

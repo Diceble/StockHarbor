@@ -2,6 +2,7 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using StockHarbor.API.Extensions;
 using StockHarbor.Domain;
 using StockHarbor.Infrastructure;
@@ -24,8 +25,9 @@ public class Program
         // Add services to the container.
         //builder.Services.AddAuthorization();
 
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        //builder.Services.AddOpenApi();
+        // Configure Serilog
+        builder.Host.UseSerilog((context, configuration) =>
+            configuration.ReadFrom.Configuration(context.Configuration));
 
         var app = builder.Build();
 
