@@ -1,6 +1,4 @@
-﻿using StockHarbor.API.Models.Products.Request;
-using StockHarbor.API.Models.Products.Response;
-using System.Collections.Generic;
+﻿using StockHarbor.API.Models.Products.Response;
 using System.Net.Http.Json;
 
 namespace StockHarbor.ApiTests.Product;

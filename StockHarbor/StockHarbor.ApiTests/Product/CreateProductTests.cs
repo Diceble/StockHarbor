@@ -1,6 +1,5 @@
 ﻿using StockHarbor.API.Models.Products.Request;
 using StockHarbor.API.Models.Products.Response;
-using StockHarbor.Domain.Entities;
 
 namespace StockHarbor.ApiTests.Product;
 

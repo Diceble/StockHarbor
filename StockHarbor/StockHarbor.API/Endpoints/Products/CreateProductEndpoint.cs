@@ -1,5 +1,4 @@
 ﻿using FastEndpoints;
-using Microsoft.AspNetCore.Authorization;
 using StockHarbor.API.Mappers.Product;
 using StockHarbor.API.Models.Products.Request;
 using StockHarbor.API.Models.Products.Response;
