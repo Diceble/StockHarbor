@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StockHarbor.Infrastructure;
@@ -11,9 +12,11 @@ using StockHarbor.Infrastructure;
 namespace StockHarbor.Domain.Migrations
 {
     [DbContext(typeof(StockHarborDatabaseContext))]
-    partial class StockHarborDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250704162306_EditProductAddProperties")]
+    partial class EditProductAddProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

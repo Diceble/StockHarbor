@@ -7,5 +7,8 @@ public class Product
     public required string Name { get; set; }
     public required string Description { get; set; }
     public required string Sku { get; set; } 
-    public ProductStatus Status { get; set; } // Optional: Active/Inactive, etc.
+    public ProductStatus Status { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public Dimension? Dimension { get; set; }
+    public required ProductType ProductType { get; set; }
 }

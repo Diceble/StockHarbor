@@ -38,87 +38,68 @@ public static class Config
     // Clients (applications that can request tokens)
     public static IEnumerable<Client> Clients =>
         [
-                // Interactive ASP.NET Core Web App
                 new Client
                 {
-                    ClientId = "stockharbor.web",
-                    ClientSecrets = { new Secret("web-client-secret".Sha256()) },
+                    ClientId = "stockharbor.nextjs",
+                    ClientName = "StockHarbor Next.js Web App",
 
                     AllowedGrantTypes = GrantTypes.Code,
-
-                    RedirectUris = { "https://localhost:5001/signin-oidc" },
-                    PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
-
-                    AllowedScopes = new List<string>
+                    RequirePkce = true,
+                    RequireClientSecret = false, // Public client for SPA
+    
+                    RedirectUris =
                     {
+                        "https://localhost:3000/api/auth/callback/duende-identity-server6", // Fixed this line
+                        "http://localhost:3000/api/auth/callback/duende-identity-server6"   // Also add HTTP version
+                    },
+                    PostLogoutRedirectUris =
+                    {
+                        "https://localhost:3000",
+                        "https://localhost:3000/logged-out"
+                    },
+                    AllowedCorsOrigins =
+                    {
+                        "https://localhost:3000"
+                    },
+                    AllowedScopes =
+                    [
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "roles",
                         "stockharbor.api"
-                    },
-
-                    AllowOfflineAccess = true
-                },
-                
+                    ],
+                    AllowOfflineAccess = true,
+                    AccessTokenLifetime = 3600,
+                    RefreshTokenUsage = TokenUsage.ReUse
+                },                
                 // API Client (for service-to-service communication)
                 new Client
                 {
                     ClientId = "stockharbor.api.client",
                     ClientSecrets = { new Secret("api-client-secret".Sha256()) },
-
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-
                     AllowedScopes = { "stockharbor.api" }
                 },
-
-                // Mobile/SPA Client (for warehouse mobile apps)
-                new Client
-                {
-                    ClientId = "stockharbor.mobile",
-
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RequirePkce = true,
-                    RequireClientSecret = false,
-
-                    RedirectUris = { "stockharbor://callback" },
-                    PostLogoutRedirectUris = { "stockharbor://callback" },
-
-                    AllowedScopes = new List<string>
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        "stockharbor.inventory",
-                        "stockharbor.orders"
-                    },
-
-                    AllowOfflineAccess = true,
-                    RefreshTokenUsage = TokenUsage.ReUse
-                },
-
                 new Client
                 {
                     ClientId = "swagger-ui",
                     ClientName = "Swagger UI for StockHarbor API",
-
                     AllowedGrantTypes = GrantTypes.Code, // Authorization Code flow
                     RequirePkce = true, // Use PKCE for security
-                    RequireClientSecret = false, // Public client (Swagger UI)
-            
+                    RequireClientSecret = false, // Public client (Swagger UI)            
                     // Redirect URIs for Swagger
                     RedirectUris =
                     {
                         "https://localhost:5000/swagger/oauth2-redirect.html",
                         "https://localhost:7083/swagger/oauth2-redirect.html" // If using different ports
-                    },
-            
+                    },            
                     // Allowed CORS origins
                     AllowedCorsOrigins =
                     {
                         "https://localhost:5000",
                         "https://localhost:7083"
-                    },
-            
+                    },            
                     // Scopes this client can request
                     AllowedScopes =
                     {
@@ -128,12 +109,10 @@ public static class Config
                         "stockharbor.inventory",
                         "stockharbor.orders",
                         "stockharbor.reports"
-                    },
-            
+                    },            
                     // Token lifetimes
                     AccessTokenLifetime = 3600, // 1 hour
-                    RefreshTokenUsage = TokenUsage.ReUse,
-            
+                    RefreshTokenUsage = TokenUsage.ReUse,            
                     // Allow offline access for refresh tokens
                     AllowOfflineAccess = true
                 }

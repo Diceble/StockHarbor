@@ -15,9 +15,15 @@ public class StockHarborDatabaseContext : DbContext
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(p => p.Id);
-
             entity.Property(p => p.Id)
-                .UseIdentityAlwaysColumn();           
+                .UseIdentityAlwaysColumn();
+            entity.OwnsOne(p => p.Dimension, dim =>
+            {
+                dim.Property(d => d.Height).HasColumnName("Dimension_Height");
+                dim.Property(d => d.Width).HasColumnName("Dimension_Width");
+                dim.Property(d => d.Length).HasColumnName("Dimension_Length");
+                dim.Property(d => d.Unit).HasColumnName("Dimension_Unit");
+            });
         });
     }
 
