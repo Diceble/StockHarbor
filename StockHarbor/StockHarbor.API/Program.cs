@@ -16,7 +16,7 @@ public class Program
         builder.Services.AddRepositories();
         builder.Services.AddApplicationServices();
         builder.Services.AddDbContext<StockHarborDatabaseContext>(options =>
-            options.UseNpgsql("Host=localhost;Port=5432;Database=StockHarbor;Username=StockHarbor;Password=StockHarborPassword"));
+            options.UseNpgsql("Host=localhost;Port=5432;Database=StockHarbor.ApiDb;Username=StockHarbor;Password=StockHarborPassword"));
 
         builder.Services.AddFastEndpointServices();
         builder.Services.AddDuendeIdentityAuthentication();

@@ -9,7 +9,7 @@ internal class StockHarborDatabaseContextFactory : IDesignTimeDbContextFactory<S
     {
         var builder = new DbContextOptionsBuilder<StockHarborDatabaseContext>();
 
-        builder.UseNpgsql("Host=localhost;Port=5432;Database=StockHarbor;Username=StockHarbor;Password=StockHarborPassword");
+        builder.UseNpgsql("Host=localhost;Port=5432;Database=StockHarbor.ApiDb;;Username=StockHarbor;Password=StockHarborPassword");
 
         return new StockHarborDatabaseContext(builder.Options);
     }
