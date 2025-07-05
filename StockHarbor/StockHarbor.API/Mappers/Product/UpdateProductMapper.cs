@@ -15,17 +15,18 @@ public class UpdateProductMapper : Mapper<UpdateProductRequest, UpdateProductRes
             Name = r.Name,
             Description = r.Description,
             Sku = r.Sku,
-            Status = r.Status
+            Status = r.Status,
+            ProductType = r.ProductType
         };
     }
 
     public override UpdateProductResponse FromEntity(Domain.Entities.Product e)
     {
-        return new UpdateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status);
+        return new UpdateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status, e.ProductType);
     }
 
     public override Task<UpdateProductResponse> FromEntityAsync(Domain.Entities.Product e, CancellationToken ct)
     {
-        return Task.FromResult(new UpdateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status));
+        return Task.FromResult(new UpdateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status, e.ProductType));
     }
 }

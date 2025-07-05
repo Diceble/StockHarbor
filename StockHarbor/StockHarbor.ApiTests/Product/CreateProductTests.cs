@@ -9,7 +9,7 @@ public class CreateProductTests(StockHarborApiFixture App) : TestBase<StockHarbo
     public async Task CreateProduct_ReturnSuccess()
     {
 
-        var request = new CreateProductRequest("Test","best test product","0123456",Domain.Enums.ProductStatus.Active);
+        var request = new CreateProductRequest("Test","best test product","0123456",Domain.Enums.ProductStatus.Active, Domain.Enums.ProductType.Stock);
         var (rsp, result) = await App.Client.POSTAsync<CreateProductRequest, CreateProductResponse>(
             "api/product/create", request);
 

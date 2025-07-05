@@ -102,7 +102,8 @@ public class StockHarborApiFixture : AppFixture<Program>
                 Name = $"Test product {i}",
                 Description = "Best test product",
                 Sku = "12345",
-                Status = Domain.Enums.ProductStatus.Active
+                Status = Domain.Enums.ProductStatus.Active,
+                ProductType = Domain.Enums.ProductType.Stock,
             });
         }
 

@@ -1,5 +1,5 @@
-﻿using StockHarbor.Domain.Entities;
-using StockHarbor.Domain.Enums;
+﻿using StockHarbor.Domain.Enums;
+using StockHarbor.Domain.ValueObjects;
 
 namespace StockHarbor.API.Models.Products.Response;
 

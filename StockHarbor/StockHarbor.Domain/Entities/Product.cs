@@ -1,4 +1,5 @@
 ﻿using StockHarbor.Domain.Enums;
+using StockHarbor.Domain.ValueObjects;
 
 namespace StockHarbor.Domain.Entities;
 public class Product

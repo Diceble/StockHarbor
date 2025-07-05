@@ -14,16 +14,17 @@ public class CreateProductMapper : Mapper<CreateProductRequest, CreateProductRes
             Description = r.Description,
             Sku = r.Sku ?? string.Empty,
             Status = r.Status,
+            ProductType = r.ProductType,
         };
     }
 
     public override CreateProductResponse FromEntity(Domain.Entities.Product e)
     {
-        return new CreateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status);
+        return new CreateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status, e.ProductType);
     }
 
     public override Task<CreateProductResponse> FromEntityAsync(Domain.Entities.Product e, CancellationToken ct)
     {
-        return Task.FromResult(new CreateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status));
+        return Task.FromResult(new CreateProductResponse(e.Id, e.Name, e.Description, e.Sku, e.Status, e.ProductType));
     }
 }
