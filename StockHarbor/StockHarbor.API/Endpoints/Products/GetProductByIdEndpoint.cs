@@ -3,6 +3,7 @@ using StockHarbor.API.Mappers.Product;
 using StockHarbor.API.Models.Products.Request;
 using StockHarbor.API.Models.Products.Response;
 using StockHarbor.Domain.Interfaces.Services;
+using System.Net;
 
 namespace StockHarbor.API.Endpoints.Products;
 
@@ -13,6 +14,6 @@ public class GetProductByIdEndpoint(IProductService productService) : Endpoint<G
     public override async Task HandleAsync(GetProductByIdRequest request, CancellationToken ct)
     {
         var product = await productService.GetProductById(request.Id);
-        await SendAsync(await Map.FromEntityAsync(product,ct), 200, ct);
+        await SendAsync(await Map.FromEntityAsync(product,ct), (int)HttpStatusCode.OK, ct);
     }
 }

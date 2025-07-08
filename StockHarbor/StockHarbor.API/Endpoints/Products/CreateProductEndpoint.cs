@@ -3,6 +3,7 @@ using StockHarbor.API.Mappers.Product;
 using StockHarbor.API.Models.Products.Request;
 using StockHarbor.API.Models.Products.Response;
 using StockHarbor.Domain.Interfaces.Services;
+using System.Net;
 
 namespace StockHarbor.API.Endpoints.Products;
 
@@ -13,6 +14,6 @@ public class CreateProductEndpoint(IProductService productService) : Endpoint<Cr
     {
         var productEntity = Map.ToEntity(request);
         var result = await productService.CreateProductAsync(productEntity);
-        await SendMappedAsync(result, 200, ct);
+        await SendMappedAsync(result,(int)HttpStatusCode.OK, ct);
     }
 }

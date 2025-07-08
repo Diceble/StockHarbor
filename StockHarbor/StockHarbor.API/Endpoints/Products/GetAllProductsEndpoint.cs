@@ -2,6 +2,7 @@
 using StockHarbor.API.Mappers.Product;
 using StockHarbor.API.Models.Products.Response;
 using StockHarbor.Domain.Interfaces.Services;
+using System.Net;
 
 namespace StockHarbor.API.Endpoints.Products;
 
@@ -12,6 +13,6 @@ public class GetAllProductsEndpoint(IProductService productService) : EndpointWi
     {
         var products = await productService.GetAllProductsAsync();
         var mappedProducts = products.Select(Map.FromEntity).ToList();
-        await SendAsync(mappedProducts, 200, ct);
+        await SendAsync(mappedProducts, (int)HttpStatusCode.OK, ct);
     }
 }
