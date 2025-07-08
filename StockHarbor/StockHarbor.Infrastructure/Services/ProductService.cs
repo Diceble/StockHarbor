@@ -16,6 +16,7 @@ public class ProductService(IProductRepository productRepository, ILogger<Produc
         }
 
         logger.LogInformation("Creating product {ProductName} with SKU {Sku}", product.Name, product.Sku);
+        product.CreatedDate = DateTimeOffset.UtcNow;
         var result = await productRepository.AddAsync(product);
         return result;
     }
