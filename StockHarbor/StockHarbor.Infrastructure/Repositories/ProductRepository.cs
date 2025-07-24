@@ -2,12 +2,11 @@
 using StockHarbor.Domain.Entities;
 using StockHarbor.Domain.Exceptions;
 using StockHarbor.Domain.Interfaces.Repository;
+using StockHarbor.Infrastructure.Persistance;
 
 namespace StockHarbor.Infrastructure.Repositories;
-public class ProductRepository(StockHarborDatabaseContext context) : IProductRepository
+public class ProductRepository(IStockHarborDatabaseContextFactory dbContextFactory) : RepositoryBase(dbContextFactory), IProductRepository
 {
-    public readonly StockHarborDatabaseContext _dbContext = context;
-
     /// <summary>
     /// Add product
     /// </summary>
@@ -15,8 +14,8 @@ public class ProductRepository(StockHarborDatabaseContext context) : IProductRep
     /// <returns></returns>
     public async Task<Product> AddAsync(Product product)
     {
-        await _dbContext.Products.AddAsync(product);
-        await _dbContext.SaveChangesAsync();
+        await DbContext.Products.AddAsync(product);
+        await DbContext.SaveChangesAsync();
         return product;
     }
 
@@ -27,7 +26,7 @@ public class ProductRepository(StockHarborDatabaseContext context) : IProductRep
     /// <returns></returns>
     public async Task<IEnumerable<Product>> GetAllAsync()
     {
-        IQueryable<Product> query = _dbContext.Products;
+        IQueryable<Product> query = DbContext.Products;
 
         return await query.ToListAsync();
     }
@@ -41,7 +40,7 @@ public class ProductRepository(StockHarborDatabaseContext context) : IProductRep
     /// <exception cref="NotFoundException">when product is not found for given id</exception>
     public async Task<Product?> GetByIdAsync(int id)
     {
-        IQueryable<Product> query = _dbContext.Products;
+        IQueryable<Product> query = DbContext.Products;
 
         return await query.FirstOrDefaultAsync(p => p.Id == id);
     }
@@ -55,7 +54,7 @@ public class ProductRepository(StockHarborDatabaseContext context) : IProductRep
     public async Task<Product?> UpdateAsync(Product updatedProduct)
     {
         // 1. Load existing product with related ProductSuppliers
-        var existingProduct = await _dbContext.Products
+        var existingProduct = await DbContext.Products
             .FirstOrDefaultAsync(p => p.Id == updatedProduct.Id);
 
         if (existingProduct == null)
@@ -68,7 +67,7 @@ public class ProductRepository(StockHarborDatabaseContext context) : IProductRep
         existingProduct.Status = updatedProduct.Status;
 
         // 4. Save changes
-        await _dbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync();
 
         // 5. return updated product
         return existingProduct;

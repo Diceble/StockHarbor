@@ -71,7 +71,9 @@ public static class Config
                     ],
                     AllowOfflineAccess = true,
                     AccessTokenLifetime = 3600,
-                    RefreshTokenUsage = TokenUsage.ReUse
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    SlidingRefreshTokenLifetime = 3600, // 1 hour sliding window
+                    RefreshTokenUsage = TokenUsage.ReUse, // Keep your existing setting
                 },                
                 // API Client (for service-to-service communication)
                 new Client

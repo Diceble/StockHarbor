@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StockHarbor.Domain.Entities;
 
-namespace StockHarbor.Infrastructure;
+namespace StockHarbor.Infrastructure.Persistance;
 public class StockHarborDatabaseContext : DbContext
 {
     public StockHarborDatabaseContext(DbContextOptions<StockHarborDatabaseContext> options) : base(options) { }

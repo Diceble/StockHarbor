@@ -1,17 +1,38 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using StockHarbor.Domain.Interfaces.Provider;
+using StockHarbor.Domain.Interfaces.Resolver;
 using StockHarbor.Domain.Interfaces.Services;
+using StockHarbor.Infrastructure.Persistance;
+using StockHarbor.Infrastructure.Providers;
+using StockHarbor.Infrastructure.Resolvers;
 using StockHarbor.Infrastructure.Services;
 
 namespace StockHarbor.API.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
+        // --- Database context factories ---
+        services.AddScoped<IStockHarborDatabaseContextFactory, StockHarborContextDatabaseFactory>();
+
+        // --- Domain services implemented in infrastructure ---
         services.AddScoped<IProductService, ProductService>();
 
+        // --- Tenant resolution and metadata providers ---
+        services.AddScoped<ITenantResolver, TenantResolver>();
+        services.AddScoped<ITenantProvider, TenantProvider>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddFrameworkServices(this IServiceCollection services)
+    {
+        services.AddMemoryCache();
+        services.AddHttpContextAccessor();
+        services.AddHttpClient();
         return services;
     }
 
@@ -38,7 +59,8 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddFastEndpointServices(this IServiceCollection services) {
+    public static IServiceCollection AddFastEndpointServices(this IServiceCollection services)
+    {
 
         services.AddFastEndpoints()
         .SwaggerDocument(o =>
@@ -67,17 +89,26 @@ public static class ServiceCollectionExtensions
                         AuthorizationCode = new NSwag.OpenApiOAuthFlow
                         {
                             AuthorizationUrl = "https://localhost:5001/connect/authorize",
-                            TokenUrl = "https://localhost:5001/connect/token",                            
+                            TokenUrl = "https://localhost:5001/connect/token",
                             Scopes = new Dictionary<string, string>
                             {
                                 { "stockharbor.api", "StockHarbor API access" },
                                 { "openid", "OpenID Connect" },
                                 { "profile", "Profile information" }
-                            }                            
-                        },                   
-                    }                 
-                }
-                );
+                            }
+                        },
+                    }
+                });
+
+                s.AddAuth("TenantIdHeader", new()
+                {
+                    Name = "X-Tenant-ID",
+                    In = NSwag.OpenApiSecurityApiKeyLocation.Header,
+                    Type = NSwag.OpenApiSecuritySchemeType.ApiKey,
+                    Description = "Tenant ID required for multi-tenant access"
+                });
+
+                s.OperationProcessors.Add(new NSwag.Generation.Processors.Security.AspNetCoreOperationSecurityScopeProcessor("TenantIdHeader"));
             };
         });
         return services;

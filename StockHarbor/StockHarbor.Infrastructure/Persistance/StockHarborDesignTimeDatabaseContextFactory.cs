@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
-using StockHarbor.Infrastructure;
 
-namespace StockHarbor.Domain;
-internal class StockHarborDatabaseContextFactory : IDesignTimeDbContextFactory<StockHarborDatabaseContext>
+namespace StockHarbor.Infrastructure.Persistance;
+internal class StockHarborDesignTimeDatabaseContextFactory : IDesignTimeDbContextFactory<StockHarborDatabaseContext>
 {
     public StockHarborDatabaseContext CreateDbContext(string[] args)
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using StockHarbor.API;
-using StockHarbor.Infrastructure;
+using StockHarbor.Infrastructure.Persistance;
 using Testcontainers.PostgreSql;
 
 namespace StockHarbor.ApiTests;

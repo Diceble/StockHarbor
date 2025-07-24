@@ -3,7 +3,8 @@ using FastEndpoints.Swagger;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using StockHarbor.API.Extensions;
-using StockHarbor.Infrastructure;
+using StockHarbor.API.Middleware;
+using StockHarbor.Infrastructure.Persistance;
 
 namespace StockHarbor.API;
 
@@ -13,10 +14,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddFrameworkServices();
         builder.Services.AddRepositories();
-        builder.Services.AddApplicationServices();
-        builder.Services.AddDbContext<StockHarborDatabaseContext>(options =>
-            options.UseNpgsql("Host=localhost;Port=5432;Database=StockHarbor.ApiDb;Username=StockHarbor;Password=StockHarborPassword"));
+        builder.Services.AddInfrastructureServices();
 
         builder.Services.AddFastEndpointServices();
         builder.Services.AddDuendeIdentityAuthentication();
@@ -29,6 +29,7 @@ public class Program
 
         var app = builder.Build();
 
+        app.UseMiddleware<TenantMiddleware>();
         app.UseMiddleware<GlobalExceptionMiddleware>();
         app.UseSerilogRequestLogging();
         // Configure the HTTP request pipeline.
