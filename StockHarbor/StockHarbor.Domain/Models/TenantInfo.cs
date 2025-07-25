@@ -3,6 +3,6 @@
 public class TenantInfo
 {
     public Guid TenantId { get; set; }
-    public string DisplayName { get; set; }
-    public string ConnectionString { get; set; }
+    public required string DisplayName { get; set; }
+    public required string ConnectionString { get; set; }
 }

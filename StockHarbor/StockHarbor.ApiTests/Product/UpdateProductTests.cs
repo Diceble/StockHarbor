@@ -26,14 +26,14 @@ public class UpdateProductTests(StockHarborApiFixture App) : TestBase<StockHarbo
 
     private static CreateProductRequest CreateProduct()
     {
-        var request = new CreateProductRequest("Test","description", "12345", Domain.Enums.ProductStatus.Active, Domain.Enums.ProductType.Stock);
+        var request = new CreateProductRequest("Test","description", "12345", Domain.Enums.ProductStatus.Active, Domain.Enums.ProductType.Stock, null);
 
         return request;
     }
 
     private static UpdateProductRequest UpdateProduct(CreateProductResponse response)
     {
-        var updatedProduct = new UpdateProductRequest(response.ProductId,"Updated Product Test", "description", "12345", Domain.Enums.ProductStatus.Active, Domain.Enums.ProductType.Stock);
+        var updatedProduct = new UpdateProductRequest(response.Id,"Updated Product Test", "description", "12345", Domain.Enums.ProductStatus.Active, Domain.Enums.ProductType.Stock, null);
 
         return updatedProduct;
     }
