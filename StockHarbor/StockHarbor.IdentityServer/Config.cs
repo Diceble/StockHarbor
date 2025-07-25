@@ -22,16 +22,21 @@ public static class Config
             },
             new ApiScope("stockharbor.inventory", "Inventory Management"),
             new ApiScope("stockharbor.orders", "Order Management"),
-            new ApiScope("stockharbor.reports", "Reporting Access")
+            new ApiScope("stockharbor.reports", "Reporting Access"),
+            new ApiScope("tenantapi.read", "Read access to Tenant API")
         ];
 
     // API resources
     public static IEnumerable<ApiResource> ApiResources =>
         [
-                new ApiResource("stockharbor", "StockHarbor WMS")
+                new ApiResource("stockharbor", "StockHarbor WMS API")
                 {
                     Scopes = { "stockharbor.api", "stockharbor.inventory", "stockharbor.orders", "stockharbor.reports" },
                     UserClaims = { "role", "warehouse_id", "department" }
+                },
+                new ApiResource("tenantapi", "StockHarbor Tenant API")
+                {
+                    Scopes = { "tenantapi.read" }
                 }
         ];
 
@@ -74,15 +79,18 @@ public static class Config
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     SlidingRefreshTokenLifetime = 3600, // 1 hour sliding window
                     RefreshTokenUsage = TokenUsage.ReUse, // Keep your existing setting
-                },                
+                },    
+                        
                 // API Client (for service-to-service communication)
                 new Client
                 {
-                    ClientId = "stockharbor.api.client",
-                    ClientSecrets = { new Secret("api-client-secret".Sha256()) },
+                    ClientId = "stockharbor.api",
+                    ClientName = "StockHarbor API",
+                    ClientSecrets = { new Secret("supersecret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    AllowedScopes = { "stockharbor.api" }
+                    AllowedScopes = { "tenantapi.read" }
                 },
+
                 new Client
                 {
                     ClientId = "swagger-ui",

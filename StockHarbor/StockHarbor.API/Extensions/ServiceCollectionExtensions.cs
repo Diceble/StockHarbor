@@ -23,7 +23,8 @@ public static class ServiceCollectionExtensions
 
         // --- Tenant resolution and metadata providers ---
         services.AddScoped<ITenantResolver, TenantResolver>();
-        services.AddScoped<ITenantProvider, TenantProvider>();
+        services.AddHttpClient<ITenantProvider, TenantProvider>()
+            .AddClientCredentialsTokenHandler("tenantapi");
 
         return services;
     }
@@ -36,7 +37,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddDuendeIdentityAuthentication(this IServiceCollection services)
+    public static IServiceCollection AddAPIAuthentication(this IServiceCollection services)
     {
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -56,6 +57,22 @@ public static class ServiceCollectionExtensions
                     ClockSkew = TimeSpan.FromMinutes(5)
                 };
             });
+        return services;
+    }
+
+    public static IServiceCollection AddAccessTokenManagement(this IServiceCollection services)
+    {
+        services.AddDistributedMemoryCache();
+
+        services.AddClientCredentialsTokenManagement()
+            .AddClient("tenantapi", client =>
+            {
+                client.TokenEndpoint = "https://localhost:5001/connect/token";
+                client.ClientId = "stockharbor.api";
+                client.ClientSecret = "supersecret";
+                client.Scope = "tenantapi.read";
+            });
+
         return services;
     }
 

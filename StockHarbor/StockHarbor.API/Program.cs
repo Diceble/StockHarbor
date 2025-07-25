@@ -1,10 +1,8 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 using StockHarbor.API.Extensions;
 using StockHarbor.API.Middleware;
-using StockHarbor.Infrastructure.Persistance;
 
 namespace StockHarbor.API;
 
@@ -19,7 +17,8 @@ public class Program
         builder.Services.AddInfrastructureServices();
 
         builder.Services.AddFastEndpointServices();
-        builder.Services.AddDuendeIdentityAuthentication();
+        builder.Services.AddAPIAuthentication();
+        builder.Services.AddAccessTokenManagement();
         // Add services to the container.
         builder.Services.AddAuthorization();
 

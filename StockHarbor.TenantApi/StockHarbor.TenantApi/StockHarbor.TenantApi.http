@@ -1,0 +1,6 @@
+@StockHarbor.TenantApi_HostAddress = http://localhost:5081
+
+GET {{StockHarbor.TenantApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

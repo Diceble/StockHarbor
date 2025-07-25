@@ -2,6 +2,7 @@
 using StockHarbor.Domain.Exceptions;
 using StockHarbor.Domain.Interfaces.Provider;
 using StockHarbor.Domain.Models;
+using System.Net.Http.Json;
 
 namespace StockHarbor.Infrastructure.Providers;
 public class TenantProvider : ITenantProvider
@@ -27,17 +28,12 @@ public class TenantProvider : ITenantProvider
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
 
-            //TODO: make call right
-            //var response = await _httpClient.GetAsync($"https://identity-service/api/tenants/{tenantId}");
-            //if (!response.IsSuccessStatusCode)
-            //    throw new TenantNotResolvedException(tenantId);
+            var response = await _httpClient.GetAsync($"https://localhost:7160/api/tenant/{tenantId}");
+           
+            if (!response.IsSuccessStatusCode)
+                throw new TenantNotResolvedException(tenantId);
 
-            //var dto = await response.Content.ReadFromJsonAsync<TenantInfo>();
-
-            var dto = new TenantInfo() { 
-                DisplayName = "StockHarbor",
-                TenantId = Guid.Parse("E6BD2252-138E-41B1-8098-D308F7054D08"),
-                ConnectionString = "Host=localhost;Port=5432;Database=StockHarbor.ApiDb;Username=StockHarbor;Password=StockHarborPassword" };
+            var dto = await response.Content.ReadFromJsonAsync<TenantInfo>();            
 
             return dto == null
                 ? null
