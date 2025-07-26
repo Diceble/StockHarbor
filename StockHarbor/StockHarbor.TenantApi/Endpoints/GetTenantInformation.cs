@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using StockHarbor.TenantApi.Interfaces;
 using StockHarbor.TenantApi.Mappers;
-using StockHarbor.TenantApi.Models.enums;
 using StockHarbor.TenantApi.Models.Requests;
 using StockHarbor.TenantApi.Models.Response;
 
@@ -15,7 +14,7 @@ public class GetTenantInformation(ITenantRepository tenantRepository) : Endpoint
 
     public override async Task HandleAsync(GetTenantRequest request, CancellationToken ct)
     {
-        var tenant = await tenantRepository.GetActiveByIdAsync(request.TenantId);
+        var tenant = await tenantRepository.GetActiveByIdAsync(request.TenantId,ct);
 
         if (tenant is null)
         {

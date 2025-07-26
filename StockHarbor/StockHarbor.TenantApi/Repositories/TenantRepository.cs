@@ -19,7 +19,7 @@ public class TenantRepository : ITenantRepository
     {
         return await _context.Tenants
             .AsNoTracking()
-            .FirstAsync(t => t.TenantId == tenantId && t.Status == TenantStatus.Active,cancellationToken);
+            .FirstOrDefaultAsync(t => t.TenantId == tenantId && t.Status == TenantStatus.Active,cancellationToken);
     }
 
     public async Task<Tenant?> GetByIdAsync(Guid tenantId, CancellationToken cancellationToken = default)
