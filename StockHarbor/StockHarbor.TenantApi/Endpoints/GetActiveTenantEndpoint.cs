@@ -9,7 +9,7 @@ namespace StockHarbor.TenantApi.Endpoints;
 
 [HttpGet("/api/tenant/active/{tenantId}")]
 [Authorize(Policy = "TenantReadAccess")]
-public class GetActiveTenant(ITenantRepository tenantRepository) : Endpoint<GetTenantRequest, GetTenantResponse, TenantMapper>
+public class GetActiveTenantEndpoint(ITenantRepository tenantRepository) : Endpoint<GetTenantRequest, GetTenantResponse, TenantMapper>
 {
 
     public override async Task HandleAsync(GetTenantRequest request, CancellationToken ct)

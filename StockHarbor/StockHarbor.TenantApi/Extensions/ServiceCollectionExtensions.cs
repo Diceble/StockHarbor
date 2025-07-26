@@ -40,8 +40,12 @@ public static class ServiceCollectionExtensions
             {
                 policy.RequireAuthenticatedUser();
                 policy.RequireClaim("scope", "tenantapi.read");
+            })
+            .AddPolicy("TenantWriteAccess", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireClaim("scope", "tenantapi.write");
             });
-
         return services;
     }
 }

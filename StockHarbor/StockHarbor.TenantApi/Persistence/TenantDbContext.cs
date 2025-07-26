@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Namotion.Reflection;
 using StockHarbor.TenantApi.Models.Entities;
 
 namespace StockHarbor.TenantApi.Persistence;
@@ -14,8 +15,9 @@ public class TenantDbContext : DbContext
         modelBuilder.Entity<Tenant>(entity =>
         {
             entity.HasKey(t => t.TenantId);
-            entity.HasIndex(t => t.TenantId).IsUnique();
+            entity.HasIndex(t => t.TenantId).IsUnique();           
             entity.HasIndex(t => t.Status);
+            entity.Property(t => t.TenantId).HasDefaultValueSql("uuid_generate_v4()");
             entity.Property(t => t.TenantName).IsRequired().HasMaxLength(200);
             entity.Property(t => t.ConnectionString).IsRequired();
             entity.Property(t => t.CreatedDate).IsRequired();

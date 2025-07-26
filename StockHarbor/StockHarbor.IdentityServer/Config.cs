@@ -23,7 +23,8 @@ public static class Config
             new ApiScope("stockharbor.inventory", "Inventory Management"),
             new ApiScope("stockharbor.orders", "Order Management"),
             new ApiScope("stockharbor.reports", "Reporting Access"),
-            new ApiScope("tenantapi.read", "Read access to Tenant API")
+            new ApiScope("tenantapi.read", "Read access to Tenant API"),
+            new ApiScope("tenantapi.write", "Write access to Tenant API")
         ];
 
     // API resources
@@ -36,7 +37,7 @@ public static class Config
                 },
                 new ApiResource("tenantapi", "StockHarbor Tenant API")
                 {
-                    Scopes = { "tenantapi.read" }
+                    Scopes = { "tenantapi.read", "tenantapi.write" }
                 }
         ];
 
