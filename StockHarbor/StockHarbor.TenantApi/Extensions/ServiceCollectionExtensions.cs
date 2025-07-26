@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FastEndpoints;
+using FastEndpoints.Swagger;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using StockHarbor.TenantApi.Interfaces;
 using StockHarbor.TenantApi.Repositories;
@@ -46,6 +48,46 @@ public static class ServiceCollectionExtensions
                 policy.RequireAuthenticatedUser();
                 policy.RequireClaim("scope", "tenantapi.write");
             });
+        return services;
+    }
+
+    public static IServiceCollection AddFastEndpointServices(this IServiceCollection services)
+    {
+        services.AddFastEndpoints()
+        .SwaggerDocument(o =>
+        {
+            o.DocumentSettings = s =>
+            {
+                s.Title = "Tenant API";
+                s.Version = "v1";
+                s.Description = "Manages tenant metadata and access for StockHarbor system.";
+            };
+
+            o.EnableJWTBearerAuth = false; // Turn this off since we'll configure OAuth2 manually
+
+            o.DocumentSettings = s =>
+            {
+                s.AddAuth("OAuth2", new()
+                {
+                    Type = NSwag.OpenApiSecuritySchemeType.OAuth2,
+                    Flows = new NSwag.OpenApiOAuthFlows
+                    {
+                        AuthorizationCode = new NSwag.OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = "https://localhost:5001/connect/authorize",
+                            TokenUrl = "https://localhost:5001/connect/token",
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "tenantapi.read", "Read tenant info" },
+                                { "tenantapi.write", "Create or update tenants" },
+                                { "openid", "OpenID scope" },
+                                { "profile", "User profile scope" }
+                            }
+                        }
+                    }
+                });
+            };
+        });
         return services;
     }
 }

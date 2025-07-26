@@ -112,9 +112,9 @@ public static class ServiceCollectionExtensions
                                 { "stockharbor.api", "StockHarbor API access" },
                                 { "openid", "OpenID Connect" },
                                 { "profile", "Profile information" }
-                            }
+                            }                            
                         },
-                    }
+                    },                    
                 });
 
                 s.AddAuth("TenantIdHeader", new()

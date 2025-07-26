@@ -35,6 +35,19 @@ public class TenantRepository(TenantDbContext context) : ITenantRepository
         return tenant;
     }
 
+    public async Task UpdateTenantStatus(Guid tenantId, TenantStatus tenantStatus, CancellationToken ct = default)
+    {
+        var tenant = await context.Tenants.FirstOrDefaultAsync(t => t.TenantId == tenantId,ct);
+        if (tenant == null)
+            return;
+
+        tenant.Status = tenantStatus;
+
+        context.Tenants.Update(tenant);
+
+        await context.SaveChangesAsync(ct);
+    }
+
     public void Update(Tenant tenant)
     {
         context.Tenants.Update(tenant);

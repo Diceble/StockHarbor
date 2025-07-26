@@ -126,6 +126,28 @@ public static class Config
                     RefreshTokenUsage = TokenUsage.ReUse,            
                     // Allow offline access for refresh tokens
                     AllowOfflineAccess = true
+                },
+                new Client
+                {
+                    ClientId = "tenantapi.swagger",
+                    ClientName = "Tenant API Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+                    RequireClientSecret = false, // no secret for browser-based apps like Swagger
+
+                    RedirectUris = { "https://localhost:7160/swagger/oauth2-redirect.html" }, // replace with your actual port
+                    AllowedCorsOrigins = { "https://localhost:7160" },
+                    PostLogoutRedirectUris = { "https://localhost:7160/swagger/" },
+
+                    AllowedScopes =
+                    {
+                        "openid",
+                        "profile",
+                        "tenantapi.read",
+                        "tenantapi.write"
+                    },
+
+                    AllowAccessTokensViaBrowser = true
                 }
-        ];
+    ];
 }
