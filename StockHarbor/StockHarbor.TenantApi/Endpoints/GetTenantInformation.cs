@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using Microsoft.AspNetCore.Authorization;
 using StockHarbor.TenantApi.Interfaces;
+using StockHarbor.TenantApi.Mappers;
 using StockHarbor.TenantApi.Models.enums;
 using StockHarbor.TenantApi.Models.Requests;
 using StockHarbor.TenantApi.Models.Response;
@@ -9,7 +10,7 @@ namespace StockHarbor.TenantApi.Endpoints;
 
 [HttpGet("/api/tenant/{tenantId}")]
 [Authorize(Policy = "TenantReadAccess")]
-public class GetTenantInformation(ITenantRepository tenantRepository) : Endpoint<GetTenantRequest, GetTenantResponse>
+public class GetTenantInformation(ITenantRepository tenantRepository) : Endpoint<GetTenantRequest, GetTenantResponse, TenantMapper>
 {
 
     public override async Task HandleAsync(GetTenantRequest request, CancellationToken ct)
@@ -22,5 +23,6 @@ public class GetTenantInformation(ITenantRepository tenantRepository) : Endpoint
             return;
         }            
 
+        await Send.OkAsync(Map.FromEntity(tenant),ct);
     }
 }
