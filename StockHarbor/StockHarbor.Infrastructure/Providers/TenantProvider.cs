@@ -28,7 +28,7 @@ public class TenantProvider : ITenantProvider
         {
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
 
-            var response = await _httpClient.GetAsync($"https://localhost:7160/api/tenant/{tenantId}");
+            var response = await _httpClient.GetAsync($"https://localhost:7160/api/tenant/active/{tenantId}");
            
             if (!response.IsSuccessStatusCode)
                 throw new TenantNotResolvedException(tenantId);

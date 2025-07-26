@@ -7,9 +7,9 @@ using StockHarbor.TenantApi.Models.Response;
 
 namespace StockHarbor.TenantApi.Endpoints;
 
-[HttpGet("/api/tenant/{tenantId}")]
+[HttpGet("/api/tenant/active/{tenantId}")]
 [Authorize(Policy = "TenantReadAccess")]
-public class GetTenantInformation(ITenantRepository tenantRepository) : Endpoint<GetTenantRequest, GetTenantResponse, TenantMapper>
+public class GetActiveTenant(ITenantRepository tenantRepository) : Endpoint<GetTenantRequest, GetTenantResponse, TenantMapper>
 {
 
     public override async Task HandleAsync(GetTenantRequest request, CancellationToken ct)
