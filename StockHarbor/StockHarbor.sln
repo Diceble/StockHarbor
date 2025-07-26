@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockHarbor.ApiTests", "Sto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockHarbor.IdentityServer", "StockHarbor.IdentityServer\StockHarbor.IdentityServer.csproj", "{CD716BF0-6107-40F1-A54F-7127D5E2969C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockHarbor.TenantApi", "..\StockHarbor.TenantApi\StockHarbor.TenantApi\StockHarbor.TenantApi.csproj", "{22711B2E-EDFB-459B-903B-B798B035390F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockHarbor.TenantApi", "StockHarbor.TenantApi\StockHarbor.TenantApi.csproj", "{22711B2E-EDFB-459B-903B-B798B035390F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

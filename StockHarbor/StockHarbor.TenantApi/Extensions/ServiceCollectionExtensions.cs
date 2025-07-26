@@ -1,10 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using StockHarbor.TenantApi.Interfaces;
+using StockHarbor.TenantApi.Repositories;
 
 namespace StockHarbor.TenantApi.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+
+    public static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<ITenantRepository, TenantRepository>();
+        return services;
+    }
+
     public static IServiceCollection AddAPIAuthentication(this IServiceCollection services)
     {
         services
