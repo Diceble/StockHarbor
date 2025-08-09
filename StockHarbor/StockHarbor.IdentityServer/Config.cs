@@ -44,6 +44,15 @@ public static class Config
     // Clients (applications that can request tokens)
     public static IEnumerable<Client> Clients =>
         [
+                // StockHarbor Identity Web App (MVC)
+                new Client {
+                  ClientId = "identity-admin",
+                  ClientSecrets = { new Secret("super-secret".Sha256()) },
+                  AllowedGrantTypes = GrantTypes.ClientCredentials,
+                  AllowedScopes = { "tenantapi.read" }                
+                },
+
+                // StockHarbor Next.js Web App (SPA)
                 new Client
                 {
                     ClientId = "stockharbor.nextjs",
@@ -92,6 +101,7 @@ public static class Config
                     AllowedScopes = { "tenantapi.read" }
                 },
 
+                // Swagger UI client for StockHarbor API
                 new Client
                 {
                     ClientId = "swagger-ui",

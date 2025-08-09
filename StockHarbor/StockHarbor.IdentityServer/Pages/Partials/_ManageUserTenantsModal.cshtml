@@ -1,0 +1,49 @@
+﻿@using StockHarbor.IdentityServer.Pages.Partials
+@model ManageUserTenantsModalVm
+
+<div class="modal fade" id="manageUsersModal" tabindex="-1" role="dialog" aria-labelledby="manageUsersLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Manage Users for <span id="mu-tenant-name"></span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="mu-tenant-id" />
+                <input type="hidden" id="TenantId" name="TenantId" />
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover" id="mu-users-table" data-toggle="table" data-search="true">
+                        <thead class="thead-light">
+                            <tr>
+                                <th style="width:48px;"></th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var u in Model.Users)
+                            {
+                                <tr>
+                                    <td class="align-middle">
+                                        <input type="checkbox" name="SelectedUserIds" class="mu-user-check" value="@u.UserId" />
+                                    </td>
+                                    <td class="align-middle">@u.UserName</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" formaction="?handler=SaveTenantUsers">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

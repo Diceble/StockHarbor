@@ -1,0 +1,110 @@
+﻿@page
+@using StockHarbor.IdentityServer.Pages.Partials
+@model StockHarbor.IdentityServer.Pages.Tenant.IndexModel
+@{
+    ViewData["Title"] = "Manage User Tenants";
+}
+<h2 class="mb-3">Manage User access for Tenants</h2>
+
+<div class="row">
+    <div class="col">
+        <form method="post">
+            <table id="table"
+                   data-toggle="table"
+                   data-search="true">
+                <thead>
+                    <tr>
+                        <th data-field="id">
+                            Tenant ID
+                        </th>
+                        <th data-field="name">
+                            Tenant Name
+                        </th>
+                        <th data-field="users">
+                            Amount of Users
+                        </th>
+                        <th>
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tenant in Model.Tenants)
+                    {
+                        <tr>
+                            <td>
+                                @tenant.TenantId
+                            </td>
+                            <td>
+                                @tenant.TenantName
+                            </td>
+                            <td>
+                                @Model.UserTenants.Count(x => x.TenantId == tenant.TenantId)
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-manage-users"
+                                        type="button"
+                                        data-tenant-id="@tenant.TenantId"
+                                        data-tenant-name="@tenant.TenantName"
+                                        data-selected-user-ids="@string.Join(",", Model.UserTenants
+                                         .Where(x => x.TenantId == tenant.TenantId)
+                                         .Select(x => x.UserId))">
+                                    Manage Users
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @await Html.PartialAsync("Partials/_ManageUserTenantsModal", new ManageUserTenantsModalVm { Users = Model.Users })
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function(){
+          // open modal & pre-check current assignments
+          $(document).on('click', '.btn-manage-users', function (e) {
+            e.preventDefault();
+            const tenantId   = $(this).data('tenant-id');
+            const tenantName = $(this).data('tenant-name') || tenantId;
+            const selectedCsv = ($(this).data('selected-user-ids') || '').toString();
+            const selectedSet = new Set(selectedCsv ? selectedCsv.split(',') : []);
+
+            // set modal header + hidden field
+            $('#mu-tenant-id').val(tenantId);
+            $('#mu-tenant-name').text(tenantName);
+            $('#TenantId').val(tenantId);
+            // reset checks, then apply selected ones
+            $('#mu-users-table .mu-user-check').prop('checked', false);
+            $('#mu-users-table .mu-user-check').each(function(){
+                const uid = $(this).val(); // same as value attribute
+                if (selectedSet.has(uid)) $(this).prop('checked', true);
+            });
+
+            // show modal
+            $('#manageUsersModal').modal('show');
+          });
+
+          // on Save: gather selected user IDs (you can POST them from here)
+          $('#mu-save').on('click', function () {
+            const tenantId = $('#mu-tenant-id').val();
+            const selected = [];
+            $('#mu-users-table .mu-user-check:checked').each(function(){
+              selected.push($(this).data('user-id').toString());
+            });
+
+            // At this point you have everything you need:
+            // tenantId = current tenant
+            // selected = array of user IDs selected for access
+            // You can now POST via fetch/ajax, or submit a form. For now, just log:
+            console.log('Tenant:', tenantId, 'SelectedUserIds:', selected);
+
+            // For now, just close:
+            $('#manageUsersModal').modal('hide');
+          });
+        })();
+    </script>
+}

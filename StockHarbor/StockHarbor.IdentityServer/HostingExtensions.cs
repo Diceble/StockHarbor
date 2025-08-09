@@ -3,6 +3,8 @@ using StockHarbor.IdentityServer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using StockHarbor.IdentityServer.Interfaces;
+using StockHarbor.IdentityServer.Services;
 
 namespace StockHarbor.IdentityServer;
 
@@ -43,6 +45,16 @@ internal static class HostingExtensions
             .AddDeveloperSigningCredential(); // Only for development;
 
         builder.Services.AddAuthentication();
+        builder.Services.AddAccessTokenManagement();
+
+        builder.Services.AddScoped<ITenantService, TenantService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddHttpClient<ITenantClient, TenantClient>(c =>
+        {
+            //c.BaseAddress = new Uri(builder.Configuration["TenantService:BaseUrl"]!);
+            // add auth headers if needed
+            c.BaseAddress = new Uri("https://localhost:7160/api");
+        }).AddClientCredentialsTokenHandler("tenant-api");    
 
         return builder.Build();
     }
@@ -67,5 +79,21 @@ internal static class HostingExtensions
             .RequireAuthorization();
 
         return app;
+    }
+
+    public static IServiceCollection AddAccessTokenManagement(this IServiceCollection services)
+    {
+        services.AddDistributedMemoryCache();
+
+        services.AddClientCredentialsTokenManagement()
+            .AddClient("tenant-api", client =>
+            {
+                client.TokenEndpoint = "https://localhost:5001/connect/token";
+                client.ClientId = "identity-admin";
+                client.ClientSecret = "super-secret";
+                client.Scope = "tenantapi.read";                
+            });
+
+        return services;
     }
 }

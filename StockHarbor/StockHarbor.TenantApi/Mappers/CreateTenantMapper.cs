@@ -18,7 +18,7 @@ public class CreateTenantMapper : Mapper<CreateTenantRequest, CreateTenantRespon
         return new Tenant()
         {
             TenantName = r.TenantName,
-            ConnectionString = r.ConnectionString,
+            ConnectionString = "connection-string-should-be",
             Status = TenantStatus.Pending,
             CreatedDate = DateTimeOffset.UtcNow,
             ContactEmail = r.ContactEmail

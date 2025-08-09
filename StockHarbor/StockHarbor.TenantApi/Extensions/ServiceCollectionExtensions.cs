@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StockHarbor.TenantApi.Interfaces;
 using StockHarbor.TenantApi.Repositories;
@@ -25,7 +26,7 @@ public static class ServiceCollectionExtensions
                 options.Authority = "https://localhost:5001"; // IdentityServer URL
                 options.RequireHttpsMetadata = false; // Set to true in production
                 options.Audience = "tenantapi"; // <-- Important: match your ApiResource name
-
+                options.IncludeErrorDetails = true; // Optional: include error details in responses
                 // Optional: Configure additional validation parameters
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
