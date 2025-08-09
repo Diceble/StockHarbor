@@ -26,11 +26,11 @@ public class IndexModel(ITenantService tenantService, IUserService userService) 
         return Page();
     }
 
-    public IActionResult OnPostSaveTenantUsers()
+    public async Task<IActionResult> OnPostSaveTenantUsersAsync(CancellationToken ct)
     {
         try
         {
-            tenantService.AddUsersToTenant(SelectedUserIds, Guid.Parse(TenantId), CancellationToken.None);
+            await tenantService.SyncUsersForTenant(Guid.Parse(TenantId), SelectedUserIds, ct);
         }
         catch (Exception ex)
         {

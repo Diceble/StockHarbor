@@ -8,4 +8,5 @@ public interface ITenantService
     Task AddUserToTentant(string userId, Guid tenantId, CancellationToken ct);
     Task AddUsersToTenant(IEnumerable<string> userIds, Guid tenantId, CancellationToken ct);
     Task RemoveUserFromTenant(string userId, Guid tenantId, CancellationToken ct);
+    Task SyncUsersForTenant(Guid tenantId, IEnumerable<string> selectedUserIds, CancellationToken ct = default);
 }
