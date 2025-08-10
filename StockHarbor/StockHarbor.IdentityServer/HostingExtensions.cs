@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using StockHarbor.IdentityServer.Interfaces;
 using StockHarbor.IdentityServer.Services;
+using Duende.IdentityServer.Services;
 
 namespace StockHarbor.IdentityServer;
 
@@ -42,11 +43,14 @@ internal static class HostingExtensions
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiResources(Config.ApiResources)
             .AddAspNetIdentity<ApplicationUser>()
+            .AddProfileService<TenantProfileService>() // Custom profile service for tenant claims
             .AddDeveloperSigningCredential(); // Only for development;
 
         builder.Services.AddAuthentication();
         builder.Services.AddAccessTokenManagement();
 
+        builder.Services.AddSingleton<IActiveTenantStore, ActiveTenantStore>();
+        
         builder.Services.AddScoped<ITenantService, TenantService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddHttpClient<ITenantClient, TenantClient>(c =>

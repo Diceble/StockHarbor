@@ -11,15 +11,12 @@ public static class Config
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
                 // Custom identity resource for WMS roles
-                new("roles", "User roles", ["role"])
+                new("roles", "User roles", ["role", "tenant_ids"])
         ];
 
     public static IEnumerable<ApiScope> ApiScopes =>
         [
-            new ApiScope("stockharbor.api", "StockHarbor WMS API")
-            {
-                    UserClaims = { "role", "warehouse_id", "department" }
-            },
+            new ApiScope("stockharbor.api", "StockHarbor WMS API"),
             new ApiScope("stockharbor.inventory", "Inventory Management"),
             new ApiScope("stockharbor.orders", "Order Management"),
             new ApiScope("stockharbor.reports", "Reporting Access"),
@@ -33,11 +30,12 @@ public static class Config
                 new ApiResource("stockharbor", "StockHarbor WMS API")
                 {
                     Scopes = { "stockharbor.api", "stockharbor.inventory", "stockharbor.orders", "stockharbor.reports" },
-                    UserClaims = { "role", "warehouse_id", "department" }
+                    UserClaims = { "role", "tenant_active", "tenant_ids" }
                 },
                 new ApiResource("tenantapi", "StockHarbor Tenant API")
                 {
-                    Scopes = { "tenantapi.read", "tenantapi.write" }
+                    Scopes = { "tenantapi.read", "tenantapi.write" },
+                    UserClaims = { "tenant_ids" } 
                 }
         ];
 
