@@ -2,13 +2,12 @@
 using Duende.IdentityServer.Services;
 using Microsoft.EntityFrameworkCore;
 using StockHarbor.IdentityServer.Data;
-using StockHarbor.IdentityServer.Interfaces;
 using StockHarbor.IdentityServer.Models;
 using System.Security.Claims;
 
 namespace StockHarbor.IdentityServer.Services;
 
-public class TenantProfileService(ApplicationDbContext dbContext, IActiveTenantStore activeTenantStore) : IProfileService
+public class TenantProfileService(ApplicationDbContext dbContext) : IProfileService
 {
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
@@ -34,11 +33,9 @@ public class TenantProfileService(ApplicationDbContext dbContext, IActiveTenantS
         // Active tenant (single)
         if (requested.Contains("tenant_active"))
         {
-            var active = await activeTenantStore.GetAsync(sub, context.Client.ClientId, default)
-                        ?? tenantIds.First(); // default to first if none chosen yet
-            // ensure it's one the user actually has
-            if (!tenantIds.Contains(active)) active = tenantIds.First();
-            context.IssuedClaims.Add(new Claim("tenant_active", active));
+            var active = context?.Subject?.FindFirst("tenant_active")?.Value ?? string.Empty;
+            if (!string.IsNullOrEmpty(active))
+                context?.IssuedClaims.Add(new Claim("tenant_active", active));
         }
     }
 

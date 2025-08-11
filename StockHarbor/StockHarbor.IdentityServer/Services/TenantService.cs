@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using StockHarbor.IdentityServer.Data;
 using StockHarbor.IdentityServer.Interfaces;
 using StockHarbor.IdentityServer.Models;
@@ -60,6 +61,12 @@ public class TenantService(ApplicationDbContext dbContext, ITenantClient tenantC
                     UserId = ut.UserId,
                     TenantId = ut.TenantId,
                 })]);
+    }
+
+    public async Task<bool> VerifyUserTenantAsync(string userId, string selectedTenantId)
+    {
+        return await dbContext.Set<UserTenant>()
+            .AnyAsync(ut => ut.UserId == userId && ut.TenantId.ToString() == selectedTenantId);
     }
 
     public Task RemoveUserFromTenant(string userId, Guid tenantId, CancellationToken ct)

@@ -27,10 +27,10 @@ public class Index : PageModel
     private readonly IIdentityProviderStore _identityProviderStore;
 
     public ViewModel View { get; set; } = default!;
-        
+
     [BindProperty]
     public InputModel Input { get; set; } = default!;
-        
+
     public Index(
         IIdentityServerInteractionService interaction,
         IAuthenticationSchemeProvider schemeProvider,
@@ -50,7 +50,7 @@ public class Index : PageModel
     public async Task<IActionResult> OnGet(string? returnUrl)
     {
         await BuildModelAsync(returnUrl);
-            
+
         if (View.IsExternalLoginOnly)
         {
             // we only have one option for logging in and it's an external provider
@@ -59,7 +59,7 @@ public class Index : PageModel
 
         return Page();
     }
-        
+
     public async Task<IActionResult> OnPost()
     {
         // check if we are in the context of an authorization request
@@ -95,56 +95,64 @@ public class Index : PageModel
             }
         }
 
-        if (ModelState.IsValid)
+        // 3) Attempt login
+        if (!ModelState.IsValid)
         {
-            var result = await _signInManager.PasswordSignInAsync(Input.Username!, Input.Password!, Input.RememberLogin, lockoutOnFailure: true);
-            if (result.Succeeded)
-            {
-                var user = await _userManager.FindByNameAsync(Input.Username!);
-                await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
-                Telemetry.Metrics.UserLogin(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider);
-
-                if (context != null)
-                {
-                    // This "can't happen", because if the ReturnUrl was null, then the context would be null
-                    ArgumentNullException.ThrowIfNull(Input.ReturnUrl, nameof(Input.ReturnUrl));
-
-                    if (context.IsNativeClient())
-                    {
-                        // The client is native, so this change in how to
-                        // return the response is for better UX for the end user.
-                        return this.LoadingPage(Input.ReturnUrl);
-                    }
-
-                    // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                    return Redirect(Input.ReturnUrl ?? "~/");
-                }
-
-                // request for a local page
-                if (Url.IsLocalUrl(Input.ReturnUrl))
-                {
-                    return Redirect(Input.ReturnUrl);
-                }
-                else if (string.IsNullOrEmpty(Input.ReturnUrl))
-                {
-                    return Redirect("~/");
-                }
-                else
-                {
-                    // user might have clicked on a malicious link - should be logged
-                    throw new ArgumentException("invalid return URL");
-                }
-            }
-
-            const string error = "invalid credentials";
-            await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, error, clientId:context?.Client.ClientId));
-            Telemetry.Metrics.UserLoginFailure(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider, error);
-            ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
+            await BuildModelAsync(Input.ReturnUrl);
+            return Page();
         }
 
-        // something went wrong, show form with error
-        await BuildModelAsync(Input.ReturnUrl);
-        return Page();
+        var result = await _signInManager.PasswordSignInAsync(Input.Username!, Input.Password!, Input.RememberLogin, lockoutOnFailure: true);
+
+        if (!result.Succeeded)
+        {
+            const string error = "invalid credentials";
+            await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, error, clientId: context?.Client.ClientId));
+            Telemetry.Metrics.UserLoginFailure(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider, error);
+            ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
+            await BuildModelAsync(Input.ReturnUrl);
+            return Page();
+        }
+
+        // 4) Login succeeded: raise event
+        var user = await _userManager.FindByNameAsync(Input.Username!);
+        await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
+        Telemetry.Metrics.UserLogin(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider);
+
+
+        // 5) INSERT TENANT-SELECTION STEP HERE
+        // If we're in an OIDC authorization flow, go select tenant before returning to client
+        if (context != null)
+        {
+            ArgumentNullException.ThrowIfNull(Input.ReturnUrl, nameof(Input.ReturnUrl));
+
+            var tenantSelectUrl = Url.Page("/Tenant/Select", new { returnUrl = Input.ReturnUrl });
+
+            if (context.IsNativeClient())
+            {
+                // For native clients, wrap the redirect for better UX (same pattern Duende uses)
+                return this.LoadingPage(tenantSelectUrl!);
+            }
+
+            // Browser-based clients: simple redirect to selection page
+            return Redirect(tenantSelectUrl!);
+        }
+
+        // 6) Non-authorization requests (local navigation): still route via tenant select
+        if (Url.IsLocalUrl(Input.ReturnUrl))
+        {
+            var tenantSelectUrl = Url.Page("/Tenant/Select/Index", new { returnUrl = Input.ReturnUrl });
+            return Redirect(tenantSelectUrl!);
+        }
+        else if (string.IsNullOrEmpty(Input.ReturnUrl))
+        {
+            // No returnUrl: send to tenant select which can default/auto-pick
+            var tenantSelectUrl = Url.Page("/Tenant/Select/Index", new { returnUrl = Url.Content("~/") });
+            return Redirect(tenantSelectUrl!);
+        }
+
+        // 7) Bad returnUrl
+        throw new ArgumentException("invalid return URL");
     }
 
     private async Task BuildModelAsync(string? returnUrl)
@@ -153,7 +161,7 @@ public class Index : PageModel
         {
             ReturnUrl = returnUrl
         };
-            
+
         var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
         if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
         {
@@ -169,7 +177,7 @@ public class Index : PageModel
 
             if (!local)
             {
-                View.ExternalProviders = new[] { new ViewModel.ExternalProvider ( authenticationScheme: context.IdP ) };
+                View.ExternalProviders = new[] { new ViewModel.ExternalProvider(authenticationScheme: context.IdP) };
             }
 
             return;

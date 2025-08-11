@@ -48,8 +48,6 @@ internal static class HostingExtensions
 
         builder.Services.AddAuthentication();
         builder.Services.AddAccessTokenManagement();
-
-        builder.Services.AddSingleton<IActiveTenantStore, ActiveTenantStore>();
         
         builder.Services.AddScoped<ITenantService, TenantService>();
         builder.Services.AddScoped<IUserService, UserService>();

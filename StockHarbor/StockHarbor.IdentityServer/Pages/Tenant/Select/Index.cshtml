@@ -1,0 +1,20 @@
+﻿@page
+@model StockHarbor.IdentityServer.Pages.Tenant.Select.IndexModel
+@{
+    ViewData["Title"] = "Choose tenant";
+}
+<h3 class="mb-3">Choose a tenant</h3>
+
+<form method="post">
+    <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+    <div class="list-group">
+        @foreach (var t in Model.Tenants)
+        {
+            <label class="list-group-item d-flex align-items-center">
+                <input class="mr-2" type="radio" name="SelectedTenantId" value="@t.Id" required />
+                <span>@t.Name</span>
+            </label>
+        }
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Continue</button>
+</form>
