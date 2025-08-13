@@ -126,7 +126,7 @@ public class Index : PageModel
         {
             ArgumentNullException.ThrowIfNull(Input.ReturnUrl, nameof(Input.ReturnUrl));
 
-            var tenantSelectUrl = Url.Page("/Tenant/Select", new { returnUrl = Input.ReturnUrl });
+            var tenantSelectUrl = Url.Page("/Tenant/Select/Index", new { returnUrl = Input.ReturnUrl });
 
             if (context.IsNativeClient())
             {
