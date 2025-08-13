@@ -40,7 +40,7 @@ public class TenantProvider : ITenantProvider
                 : new TenantInfo
             {
                 TenantId = dto.TenantId,
-                DisplayName = dto.DisplayName,
+                Name = dto.Name,
                 ConnectionString = dto.ConnectionString
             };
         });
