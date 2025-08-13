@@ -78,4 +78,16 @@ public class TenantService(ApplicationDbContext dbContext, ITenantClient tenantC
     {
         return await tenantClient.GetAllAsync(ct);
     }
+
+    public async Task<IReadOnlyList<TenantViewModel>> GetAllTenantsByUserId(string userId, CancellationToken ct = default)
+    {
+        var tenantIds = await dbContext.Set<UserTenant>()
+            .Where(ut => ut.UserId == userId)
+            .Select(ut => ut.TenantId)
+            .ToListAsync(ct);
+
+        var tenants = await tenantClient.GetByTenantIdsAsyc(tenantIds, ct);
+
+        return [.. tenants.Select(t => new TenantViewModel(t.Id,t.Name))];
+    }
 }

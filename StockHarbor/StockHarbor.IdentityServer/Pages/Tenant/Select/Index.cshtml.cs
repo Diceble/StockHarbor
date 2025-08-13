@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using StockHarbor.IdentityServer.Data;
 using StockHarbor.IdentityServer.Interfaces;
 using StockHarbor.IdentityServer.Models;
 using StockHarbor.IdentityServer.Models.ViewModels;
@@ -18,7 +17,7 @@ public class IndexModel : PageModel
     private readonly ITenantService _tenantService;
 
 
-    public List<TenantViewModel> Tenants { get; set; } = new();
+    public IReadOnlyList<TenantViewModel> Tenants { get; set; } 
 
     [BindProperty(SupportsGet = true)] public string ReturnUrl { get; set; } = "";
     [BindProperty] public string SelectedTenantId { get; set; } = "";
@@ -36,6 +35,7 @@ public class IndexModel : PageModel
         _userManager = userManager;
         _interaction = interaction;
         _tenantService = tenantService;
+        Tenants = [];
     }
 
     public async Task<IActionResult> OnGetAsync()
@@ -46,26 +46,21 @@ public class IndexModel : PageModel
         if (user is null) return Challenge(); // not logged in
 
         // Load the list of tenants for the user from tenantServices based on the tenantIds that the user has access to.
+        Tenants = await _tenantService.GetAllTenantsByUserId(user.Id);
 
-        //Tenants = await _db.Set<UserTenant>()
-        //    .Where(ut => ut.UserId == user.Id)
-        //    .Join(_db.Set<Tenant>(), ut => ut.TenantId, t => t.Id, (ut, t) => new TenantVm(t.Id.ToString(), t.Name))
-        //    .OrderBy(t => t.Name)
-        //    .ToListAsync();
-
-        //if (Tenants.Count == 1)
-        //{
-        //    // auto-pick the only tenant
-        //    SelectedTenantId = Tenants[0].Id;
-        //    return await OnPostAsync();
-        //}
+        if (Tenants.Count == 1)
+        {
+            // auto-pick the only tenant
+            SelectedTenantId = Tenants[0].Id.ToString();
+            return await OnPostAsync();
+        }
 
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!_interaction.IsValidReturnUrl(ReturnUrl)) return BadRequest();
+        if (!IsSafeReturnUrl(ReturnUrl)) return BadRequest();
         var user = await _userManager.GetUserAsync(User);
         if (user is null) return Challenge();
 

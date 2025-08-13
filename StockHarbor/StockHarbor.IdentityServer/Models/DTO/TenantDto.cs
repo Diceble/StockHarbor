@@ -2,6 +2,6 @@
 
 public sealed class TenantDto
 {
-    public Guid TenantId { get; set; }
-    public string TenantName { get; set; } = default!;
+    public Guid Id { get; set; }
+    public string Name { get; set; } = default!;
 }

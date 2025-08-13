@@ -16,6 +16,14 @@ public class TenantRepository(TenantDbContext context) : ITenantRepository
             .FirstOrDefaultAsync(t => t.TenantId == tenantId && t.Status == TenantStatus.Active,cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Tenant>> GetByIdsAsync(List<Guid> tenantIds, CancellationToken cancellationToken = default)
+    {
+        return await context.Tenants
+            .AsNoTracking()
+            .Where(t => tenantIds.Contains(t.TenantId))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Tenant?> GetByIdAsync(Guid tenantId, CancellationToken cancellationToken = default)
     {
         return await context.Tenants.FindAsync(new object[] { tenantId }, cancellationToken);

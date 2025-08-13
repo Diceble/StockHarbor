@@ -10,5 +10,5 @@ public class TenantMapper : Mapper<GetTenantRequest, GetTenantResponse, Tenant>
     public override GetTenantResponse FromEntity(Tenant e)
     {
         return new GetTenantResponse(e);
-    }    
+    }
 }

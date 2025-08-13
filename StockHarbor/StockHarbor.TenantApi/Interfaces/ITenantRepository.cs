@@ -13,4 +13,5 @@ public interface ITenantRepository
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
     Task<Tenant?> GetActiveByIdAsync(Guid tenantId, CancellationToken cancellationToken = default);
     Task UpdateTenantStatus(Guid tenantId, TenantStatus tenantStatus, CancellationToken ct = default);
+    Task<IReadOnlyList<Tenant>> GetByIdsAsync(List<Guid> tenantIds, CancellationToken ct);
 }

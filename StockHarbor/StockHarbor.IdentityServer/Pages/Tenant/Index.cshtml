@@ -33,21 +33,21 @@
                     {
                         <tr>
                             <td>
-                                @tenant.TenantId
+                                @tenant.Id
                             </td>
                             <td>
-                                @tenant.TenantName
+                                @tenant.Name
                             </td>
                             <td>
-                                @Model.UserTenants.Count(x => x.TenantId == tenant.TenantId)
+                                @Model.UserTenants.Count(x => x.TenantId == tenant.Id)
                             </td>
                             <td>
                                 <button class="btn btn-primary btn-manage-users"
                                         type="button"
-                                        data-tenant-id="@tenant.TenantId"
-                                        data-tenant-name="@tenant.TenantName"
+                                        data-tenant-id="@tenant.Id"
+                                        data-tenant-name="@tenant.Name"
                                         data-selected-user-ids="@string.Join(",", Model.UserTenants
-                                         .Where(x => x.TenantId == tenant.TenantId)
+                                         .Where(x => x.TenantId == tenant.Id)
                                          .Select(x => x.UserId))">
                                     Manage Users
                                 </button>

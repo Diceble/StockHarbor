@@ -12,4 +12,16 @@ public class TenantClient(HttpClient http) : ITenantClient
         var response = await http.GetFromJsonAsync<IReadOnlyList<TenantDto>>(url, ct);
         return response ?? [];
     }
+
+    public async Task<IReadOnlyList<TenantDto>> GetByTenantIdsAsyc(IEnumerable<Guid> tenantIds, CancellationToken ct)
+    {
+        if (tenantIds == null || !tenantIds.Any())
+            return [];
+
+        string query = string.Join("&", tenantIds.Select(g => $"tenantIds={g}"));
+
+        var url = $"{http.BaseAddress}/tenants/summary?{query}";
+        var response = await http.GetFromJsonAsync<IReadOnlyList<TenantDto>>(url, ct);
+        return response ?? [];
+    }
 }
