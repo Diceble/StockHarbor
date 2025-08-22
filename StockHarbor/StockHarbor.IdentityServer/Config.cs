@@ -16,9 +16,10 @@ public static class Config
 
     public static IEnumerable<ApiScope> ApiScopes =>
         [
-            new ApiScope("stockharbor.api", "StockHarbor WMS API"),
+            new ApiScope("stockharbor.product.read", "StockHarbor WMS API Product Reading"),
+            new ApiScope("stockharbor.product.write", "StockHarbor WMS API Product Writing"),
             new ApiScope("stockharbor.inventory", "Inventory Management"),
-            new ApiScope("stockharbor.orders", "Order Management"),
+            new ApiScope("stockharbor.orders", "Order Management"),            
             new ApiScope("stockharbor.reports", "Reporting Access"),
             new ApiScope("tenantapi.read", "Read access to Tenant API"),
             new ApiScope("tenantapi.write", "Write access to Tenant API")
@@ -29,7 +30,7 @@ public static class Config
         [
                 new ApiResource("stockharbor", "StockHarbor WMS API")
                 {
-                    Scopes = { "stockharbor.api", "stockharbor.inventory", "stockharbor.orders", "stockharbor.reports" },
+                    Scopes = { "stockharbor.product.read", "stockharbor.product.write" },
                     UserClaims = { "role", "tenant_active", "tenant_ids" }
                 },
                 new ApiResource("tenantapi", "StockHarbor Tenant API")
@@ -80,7 +81,8 @@ public static class Config
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "roles",
-                        "stockharbor.api"
+                        "stockharbor.product.read", 
+                        "stockharbor.product.write"
                     ],
                     AllowOfflineAccess = true,
                     AccessTokenLifetime = 3600,
@@ -124,10 +126,8 @@ public static class Config
                     {
                         "openid",
                         "profile",
-                        "stockharbor.api",
-                        "stockharbor.inventory",
-                        "stockharbor.orders",
-                        "stockharbor.reports"
+                        "stockharbor.product.read",
+                        "stockharbor.product.write"
                     },            
                     // Token lifetimes
                     AccessTokenLifetime = 3600, // 1 hour

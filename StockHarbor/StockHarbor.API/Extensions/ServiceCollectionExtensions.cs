@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using StockHarbor.Domain.Interfaces.Provider;
 using StockHarbor.Domain.Interfaces.Resolver;
 using StockHarbor.Domain.Interfaces.Services;
@@ -8,6 +9,7 @@ using StockHarbor.Infrastructure.Persistance;
 using StockHarbor.Infrastructure.Providers;
 using StockHarbor.Infrastructure.Resolvers;
 using StockHarbor.Infrastructure.Services;
+using System.Runtime.CompilerServices;
 
 namespace StockHarbor.API.Extensions;
 
@@ -60,6 +62,17 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    public static IServiceCollection AddAPIAuthorization(this IServiceCollection services)
+    {
+        services
+            .AddAuthorizationBuilder()
+            .SetDefaultPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build())
+            .AddPolicy("product.read", policy => policy.RequireAnyScope("stockharbor.product.read"))
+            .AddPolicy("product.write", policy => policy.RequireAnyScope("stockharbor.product.write"));
+
+        return services;
+    }
+
     public static IServiceCollection AddAccessTokenManagement(this IServiceCollection services)
     {
         services.AddDistributedMemoryCache();
@@ -109,12 +122,13 @@ public static class ServiceCollectionExtensions
                             TokenUrl = "https://localhost:5001/connect/token",
                             Scopes = new Dictionary<string, string>
                             {
-                                { "stockharbor.api", "StockHarbor API access" },
+                                { "stockharbor.product.read", "StockHarbor API access" },
+                                { "stockharbor.product.write", "StockHarbor API write access" },
                                 { "openid", "OpenID Connect" },
                                 { "profile", "Profile information" }
-                            }                            
+                            }
                         },
-                    },                    
+                    },
                 });
 
                 s.AddAuth("TenantIdHeader", new()

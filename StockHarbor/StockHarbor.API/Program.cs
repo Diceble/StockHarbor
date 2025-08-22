@@ -20,7 +20,8 @@ public class Program
         builder.Services.AddAPIAuthentication();
         builder.Services.AddAccessTokenManagement();
         // Add services to the container.
-        builder.Services.AddAuthorization();
+
+        builder.Services.AddAPIAuthorization();
 
         // Configure Serilog
         builder.Host.UseSerilog((context, configuration) =>
@@ -44,7 +45,8 @@ public class Program
                 ui.OAuth2Client.ClientId = "swagger-ui";
                 ui.OAuth2Client.AppName = "Swagger UI for StockHarbor API";
                 ui.OAuth2Client.UsePkceWithAuthorizationCodeGrant = true;
-                ui.OAuth2Client.Scopes.Add("stockharbor.api");
+                ui.OAuth2Client.Scopes.Add("stockharbor.product.read");
+                ui.OAuth2Client.Scopes.Add("stockharbor.product.write");
                 ui.OAuth2Client.Scopes.Add("profile");
                 ui.OAuth2Client.Scopes.Add("openid");
             });
